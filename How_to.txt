@@ -24,3 +24,13 @@ Trabalho EA:
 					https://i.imgur.com/niGxEHe.png
 
 >> Isto vai gerar todas as classes DAO, o diagrama de classe, etc. 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+Abrir mysql 8.0 command line client (se windows)
+
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'lol123lol123';
+GRANT ALL PRIVILEGES ON * . * TO 'user'@'localhost';
+FLUSH PRIVILEGES;
+
+Criar conexão no workbench
