@@ -18,6 +18,7 @@ import org.orm.criteria.*;
 
 public class UsersCriteria extends AbstractORMCriteria {
 	public final IntegerExpression idUser;
+	public final StringExpression name;
 	public final StringExpression email;
 	public final StringExpression password;
 	public final StringExpression level;
@@ -35,6 +36,7 @@ public class UsersCriteria extends AbstractORMCriteria {
 	public UsersCriteria(Criteria criteria) {
 		super(criteria);
 		idUser = new IntegerExpression("idUser", this);
+		name =  new StringExpression("name", this);
 		email = new StringExpression("email", this);
 		password = new StringExpression("password", this);
 		level = new StringExpression("level", this);

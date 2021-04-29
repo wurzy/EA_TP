@@ -7,6 +7,8 @@ import java.sql.Timestamp;
 public class UserJSON {
     private int idUser;
 
+    private String name;
+
     private String email;
 
     private String password;
@@ -59,8 +61,17 @@ public class UserJSON {
         return role;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public UserJSON(Users u) {
         this.idUser = u.getIdUser();
+        this.name = u.getName();
         this.email = u.getEmail();
         this.password = u.getPassword();
         this.level = u.getLevel();

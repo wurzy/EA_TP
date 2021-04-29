@@ -50,7 +50,9 @@ public class Users {
 	};
 	
 	private int idUser;
-	
+
+	private String name;
+
 	private String email;
 	
 	private String password;
@@ -62,7 +64,15 @@ public class Users {
 	private String description;
 	
 	private String picture;
-	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	private boolean blocked;
 	
 	private Roles idRole;
@@ -70,7 +80,7 @@ public class Users {
 	private java.util.Set ORM_comments = new java.util.HashSet();
 	
 	private java.util.Set ORM_posts = new java.util.HashSet();
-	
+
 	private java.util.Set ORM_ratings = new java.util.HashSet();
 	
 	private java.util.Set ORM_updates = new java.util.HashSet();
