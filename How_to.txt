@@ -1,5 +1,8 @@
 Trabalho EA:
 
+/////////////////////////////////////////////////////////////////////////////////////////  
+Instalar Visual Paradigm Standard
+
 1) Instalar https://www.visual-paradigm.com/download/archive/ - Versão 16.2
  1.1) Ativar 
       (na versão antiga da interface do VP): Tools > License Manager > 
@@ -10,7 +13,19 @@ Trabalho EA:
 	Activation Code:8B5C3-9VF37-T3JRQ-DA927-SL93U
 	Expiry Date: 2021-11-08
 
-2) Seguir "Tutorial VPP - Hibernate.pdf"
+/////////////////////////////////////////////////////////////////////////////////////////
+Instalar IntelliJ (Ultimate)
+
+1) Sacar aqui a versão Ultimate: https://www.jetbrains.com/idea/download/#section=windows
+
+2) https://account.jetbrains.com/login (criar conta com o mail da UM)
+
+3) Renovar a license key (se já tinham a conta de quando tivemos DSS) ou obter license key 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+Gerar DAOs e XMLs necessários
+
+1) Seguir "Tutorial VPP - Hibernate.pdf"
    (basicamente criar code a partir da database que criamos em SQL, com o VP)
 
 >> ((o model tinha um erro, uma primarykey null, mudei para not null))
@@ -26,11 +41,41 @@ Trabalho EA:
 >> Isto vai gerar todas as classes DAO, o diagrama de classe, etc. 
 
 /////////////////////////////////////////////////////////////////////////////////////////
+Setup IntelliJ:
 
-Abrir mysql 8.0 command line client (se windows)
+Explicação sobre backend: #################################################
+
+> BackendApplication.java: - função main é só para começar a app (dar run)
+			               - app orientada a eventos
+
+> BasicController.java: - @GetMapping("/test") - precisamos disto para os gets
+						- no return converte o java (p.e. UserJSON.java)em json 
+						- também conseguimos aninhar os "json" ao criar outros java e a chamá-los quando é necessário
+
+> aplication.properties: (para já) põe /app antes de cada rota
+
+> AuthenticationBean.java:
+	bean - stateless e local (em vez de remote)
+		 - servem para escalabilidade (lockamos beans quando usamos as funções nele)
+		 - chamamos os beans com @EJB 
+
+###########################################################################
+
+- pom.xml > right-click > Maven > Reload project
+- File > Project Structure > Project > Add SDK > Download 
+- File > Project Structure > Modules > Dependencies > + > 1 > Code/lib/orm.jar  
+- File > Project Structure > Modules > + EJB > Create Artifact 
+
+/////////////////////////////////////////////////////////////////////////////////////////
+Setup da database:
+
+1) Abrir mysql 8.0 command line client (se windows)
 
 CREATE USER 'user'@'localhost' IDENTIFIED BY 'lol123lol123';
 GRANT ALL PRIVILEGES ON * . * TO 'user'@'localhost';
 FLUSH PRIVILEGES;
 
-Criar conexão no workbench
+2) Criar conexão no workbench
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
