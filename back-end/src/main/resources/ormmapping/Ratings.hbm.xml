@@ -7,7 +7,7 @@ License Type: Academic
 <hibernate-mapping>
 	<class name="backend.dao.Ratings" table="ratings" lazy="false">
 		<id name="idRatings" column="idRatings" type="integer" unsaved-value="0">
-			<generator class="native">
+			<generator class="increment">
 			</generator>
 		</id>
 		<property name="rating" column="rating" type="integer" length="10" not-null="true" lazy="false"/>

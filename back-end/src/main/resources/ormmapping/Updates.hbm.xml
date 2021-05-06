@@ -7,7 +7,7 @@ License Type: Academic
 <hibernate-mapping>
 	<class name="backend.dao.Updates" table="updates" lazy="false">
 		<id name="idUpdate" column="idUpdate" type="integer" unsaved-value="0">
-			<generator class="native">
+			<generator class="increment">
 			</generator>
 		</id>
 		<property name="state" column="state" type="string" length="45" not-null="true" lazy="false"/>

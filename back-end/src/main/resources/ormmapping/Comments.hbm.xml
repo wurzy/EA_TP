@@ -7,7 +7,7 @@ License Type: Academic
 <hibernate-mapping>
 	<class name="backend.dao.Comments" table="comments" lazy="false">
 		<id name="idComment" column="idComment" type="integer" unsaved-value="0">
-			<generator class="native">
+			<generator class="increment">
 			</generator>
 		</id>
 		<property name="body" column="body" type="string" length="200" not-null="true" lazy="false"/>

@@ -1,0 +1,103 @@
+package backend.controllers;
+
+import backend.beans.FileSystemBean;
+import backend.beans.UserBean;
+import backend.json.AuthenticationJSON;
+import backend.json.RegisterJSON;
+import backend.json.UserJSON;
+import backend.json.UserProfileJSON;
+import backend.util.JWTUtil;
+import io.jsonwebtoken.Claims;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
+
+import javax.activation.FileTypeMap;
+import javax.ejb.EJB;
+import java.io.File;
+import java.nio.file.Files;
+
+@RestController
+@RequestMapping(value="/user")
+public class UserController {
+
+    @EJB
+    UserBean ub;
+    @EJB
+    FileSystemBean fsb;
+
+    @GetMapping("/")
+    public UserJSON[] getUsers() throws Exception{
+        return ub.getUsers();
+    }
+
+    @GetMapping( "/image/thumbnail/{name}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String name) throws Exception{
+        File img = fsb.getImage(name);
+        return ResponseEntity.ok().contentType(MediaType.valueOf(FileTypeMap.getDefaultFileTypeMap().getContentType(img))).body(Files.readAllBytes(img.toPath()));
+    }
+
+    @GetMapping("/image/{id}")
+    public String getImage(@PathVariable Integer id){
+        String u = ub.getUserPicture(id);
+        if(u!=null){
+            return u;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+        }
+    }
+    
+    @GetMapping("/{id}")
+    public UserJSON getUser(@PathVariable Integer id){
+        UserJSON u = ub.getUser(id);
+        if(u!=null){
+            return u;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+        }
+    }
+
+    @PutMapping("/{id}")
+    public UserJSON changeUserInfo(@PathVariable Integer id, @RequestBody UserProfileJSON upj){
+        return ub.changeUserInfo(id,upj);
+    }
+
+    @PutMapping("/image/{id}")
+    public String changePicture(@PathVariable Integer id,@RequestParam("image") MultipartFile image){
+        return fsb.savePicture(image, id);
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody AuthenticationJSON aj){
+        String token = ub.login(aj);
+        if(token!=null){
+            return token;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+        }
+    }
+
+    @PostMapping("/register")
+    public UserJSON register(@RequestParam("image") MultipartFile image, @RequestParam String name, @RequestParam String email,@RequestParam String password,@RequestParam java.sql.Timestamp registerDate, @RequestParam String description, @RequestParam String type, @RequestParam String affiliation){
+        UserJSON uj = ub.register(new RegisterJSON(name,email,password,registerDate,description,type,affiliation));
+        if( uj !=null) {
+            fsb.savePicture(image,uj.getIdUser());
+            return uj;
+        }
+        else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
+        }
+    }
+
+    @PostMapping("/token")
+    public Claims decodeToken(@RequestBody String token){
+        return JWTUtil.decodeJWT(token);
+    }
+
+}

@@ -1,54 +1,66 @@
 package backend.util;
 
-/*import io.jsonwebtoken.Claims;
+import backend.dao.Users;
+import backend.json.RoleJSON;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.stereotype.Service;
 
+import javax.crypto.spec.SecretKeySpec;
+import javax.xml.bind.DatatypeConverter;
+import java.security.Key;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
-
-@Service
-*/
 public class JWTUtil {
-/*
-    private String secret = "secret";
+    private static final String SECRET_KEY = "EA_TP_2021";
 
-    public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public static String createJWT(String issuer, String subject, long ttlMillis, Users u) {
+
+        //The JWT signature algorithm we will be using to sign the token
+        SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;
+
+        long nowMillis = System.currentTimeMillis();
+        Date now = new Date(nowMillis);
+
+        //We will sign our JWT with our ApiKey secret
+        byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(SECRET_KEY);
+        Key signingKey = new SecretKeySpec(apiKeySecretBytes, signatureAlgorithm.getJcaName());
+
+        //Let's set the JWT Claims
+        JwtBuilder builder = Jwts.builder()
+                .setIssuedAt(now)
+                .setSubject(subject)
+                .claim("idUser",u.getIdUser())
+                .claim("name",u.getName())
+                .claim("email",u.getEmail())
+                .claim("password",u.getPassword())
+                .claim("level",u.getLevel())
+                .claim("registerDate",u.getRegisterDate())
+                .claim("description",u.getDescription())
+                .claim("picture",u.getPicture())
+                .claim("blocked",u.getBlocked())
+                .claim("role",new RoleJSON(u.getIdRole()))
+                .setIssuer(issuer)
+                .signWith(signatureAlgorithm, signingKey);
+
+        //if it has been specified, let's add the expiration
+        if (ttlMillis > 0) {
+            long expMillis = nowMillis + ttlMillis;
+            Date exp = new Date(expMillis);
+            builder.setExpiration(exp);
+        }
+
+        //Builds the JWT and serializes it to a compact, URL-safe string
+        return builder.compact();
     }
 
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public static Claims decodeJWT(String jwt) {
+        //This line will throw an exception if it is not a signed JWS (as expected)
+        Claims claims = Jwts.parser()
+                .setSigningKey(DatatypeConverter.parseBase64Binary(SECRET_KEY))
+                .parseClaimsJws(jwt).getBody();
+        return claims;
     }
-
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-    private Claims extractAllClaims(String token) {
-        token = token.substring(1);
-        return Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-    }
-
-    private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    public String generateToken(String username,char tipo) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username,tipo);
-    }
-
-    private String createToken(Map<String, Object> claims, String subject, char tipo) {
-
-        return tipo +  Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
-                .signWith(SignatureAlgorithm.HS256, secret).compact();
-    }
-    */
 
 }

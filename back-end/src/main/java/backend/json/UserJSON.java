@@ -9,9 +9,9 @@ public class UserJSON {
 
     private String name;
 
-    private String email;
+    //private String email;
 
-    private String password;
+    //private String password;
 
     private String level;
 
@@ -29,13 +29,13 @@ public class UserJSON {
         return idUser;
     }
 
-    public String getEmail() {
-        return email;
-    }
+    //public String getEmail() {
+    //    return email;
+    //}
 
-    public String getPassword() {
-        return password;
-    }
+    //public String getPassword() {
+    //    return password;
+    //}
 
     public String getLevel() {
         return level;
@@ -65,15 +65,11 @@ public class UserJSON {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public UserJSON(Users u) {
         this.idUser = u.getIdUser();
         this.name = u.getName();
-        this.email = u.getEmail();
-        this.password = u.getPassword();
+        //this.email = u.getEmail();
+        //this.password = u.getPassword();
         this.level = u.getLevel();
         this.registerDate = u.getRegisterDate();
         this.description = u.getDescription();

@@ -7,7 +7,7 @@ License Type: Academic
 <hibernate-mapping>
 	<class name="backend.dao.Resources" table="resources" lazy="false">
 		<id name="idResource" column="idResource" type="integer" unsaved-value="0">
-			<generator class="native">
+			<generator class="increment">
 			</generator>
 		</id>
 		<property name="title" column="title" type="string" length="50" not-null="true" lazy="false"/>

@@ -1,0 +1,116 @@
+{
+    "dim_language": [
+        {
+            "id_language": 1,
+            "nativeLanguage": "Português"
+        },
+        {
+            "id_language": 2,
+            "nativeLanguage": "Espanhol"
+        }
+    ],
+    "dim_location": [
+        {
+            "id_location": 1,
+            "country": "Portugal",
+            "district": "Aveiro"
+        }
+    ],
+    "dim_education": [
+        {
+            "id_education": 1,
+            "education_level": "<= 6 anos"
+        }
+    ],
+    "dim_patient_characteristics": [
+        {
+            "id_patient_characteristics": 1,
+            "DOB": "1999-12-12",
+            "sex": "Masculino",
+            "socioeconomicstatus": "média baixa"
+        }
+    ],
+    "dim_height": [
+        {
+            "id_height": 1,
+            "height": 182,
+            "id_patient_characteristics": 1
+        }
+    ],
+    "dim_weight": [
+        {
+            "id_weight": 1,
+            "weight": 82,
+            "id_patient_characteristics": 1
+        }
+    ],
+    "dim_healthInsurance": [
+        {
+            "id_healthInsurance": 1,
+            "healthInsurance": "Medicare",
+            "id_patient_characteristics": 1
+        }
+    ],
+    "dim_PROM": [
+        {
+            "id_PROM": 1,
+            "numberQuestions": 15,
+            "notification": "nenhuma",
+            "environment": "outro"
+        }
+    ],
+    "dim_patient": [
+        {
+            "id_patient": 1,
+            "livesAlone": true,
+            "isNew": true,
+            "id_knowledge": 1,
+            "id_location": 1,
+            "id_patient_characteristics": 1
+        }
+    ],
+    "dim_patient_language": [
+        {
+            "id_patient": 1,
+            "id_language": 1
+        }, 
+        {
+            "id_patient": 1,
+            "id_language": 2
+        }
+    ],
+    "dim_patient_PROM": [
+        {
+            "id_PROM": 1,
+            "id_patient": 1,
+            "help": true,
+            "knowsPurpose": true,
+            "easyResponse": true,
+            "fillingDate": "2021-01-01",
+            "timing": "pre-op",
+            "interval": 2,
+            "gaveUp": 14,
+            "responseTime": 5
+        }
+    ],
+    "facts_response": [
+        {
+            "id_response": 1,
+            "id_patient": 1,
+            "id_patient_characteristics": 1,
+            "id_knowledge": 1,
+            "id_location": 2
+        }
+    ],
+    "dim_surgery": [
+        {
+            "id_surgery": 1,
+            "healthStateBefore": "boa",
+            "patientSatisfaction": "razoável",
+            "id_patient": 1,
+            "id_patient_characteristics": 1,
+            "id_knowledge": 1,
+            "id_location": 2
+        }
+    ]
+}
