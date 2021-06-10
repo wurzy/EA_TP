@@ -18,6 +18,7 @@ import org.orm.criteria.*;
 
 public class PostsDetachedCriteria extends AbstractORMDetachedCriteria {
 	public final IntegerExpression idPost;
+	public final StringExpression title;
 	public final StringExpression body;
 	public final TimestampExpression createdAt;
 	public final IntegerExpression idUserId;
@@ -29,6 +30,7 @@ public class PostsDetachedCriteria extends AbstractORMDetachedCriteria {
 	public PostsDetachedCriteria() {
 		super(Posts.class, PostsCriteria.class);
 		idPost = new IntegerExpression("idPost", this.getDetachedCriteria());
+		title = new StringExpression("title", this.getDetachedCriteria());
 		body = new StringExpression("body", this.getDetachedCriteria());
 		createdAt = new TimestampExpression("createdAt", this.getDetachedCriteria());
 		idUserId = new IntegerExpression("idUser.idUser", this.getDetachedCriteria());
@@ -41,6 +43,7 @@ public class PostsDetachedCriteria extends AbstractORMDetachedCriteria {
 	public PostsDetachedCriteria(DetachedCriteria aDetachedCriteria) {
 		super(aDetachedCriteria, PostsCriteria.class);
 		idPost = new IntegerExpression("idPost", this.getDetachedCriteria());
+		title = new StringExpression("title", this.getDetachedCriteria());
 		body = new StringExpression("body", this.getDetachedCriteria());
 		createdAt = new TimestampExpression("createdAt", this.getDetachedCriteria());
 		idUserId = new IntegerExpression("idUser.idUser", this.getDetachedCriteria());

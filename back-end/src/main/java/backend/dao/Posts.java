@@ -45,7 +45,9 @@ public class Posts {
 	};
 	
 	private int idPost;
-	
+
+	private String title;
+
 	private String body;
 	
 	private java.sql.Timestamp createdAt;
@@ -83,7 +85,15 @@ public class Posts {
 	public java.sql.Timestamp getCreatedAt() {
 		return createdAt;
 	}
-	
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
 	public void setIdUser(Users value) {
 		if (idUser != null) {
 			idUser.posts.remove(this);
