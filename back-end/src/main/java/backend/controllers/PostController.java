@@ -13,6 +13,11 @@ public class PostController {
     @EJB
     PostBean pb;
 
+    @GetMapping("/")
+    public PostJSON[] getPosts(){
+        return pb.getPosts();
+    }
+
     @GetMapping("/{id}")
     public PostJSON getPost(@PathVariable int id){
         return pb.getPost(id);

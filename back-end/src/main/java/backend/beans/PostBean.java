@@ -13,6 +13,26 @@ import javax.ejb.Stateless;
 @Component
 public class PostBean {
 
+    public PostJSON[] getPosts(){
+        try{
+            Posts[] us = PostsDAO.listPostsByQuery(null,null);
+            PostJSON[] s = new PostJSON[us.length];
+            for(int i = 0; i < us.length; i++){
+                Comments[] ps = CommentsDAO.listCommentsByQuery("idPost="+us[i].getIdPost(),null);
+                CommentJSON[] cs = new CommentJSON[ps.length];
+                for(int x = 0; x < ps.length; x++){
+                    cs[x] = new CommentJSON(ps[x]);
+                }
+                s[i] = new PostJSON(us[i],cs);
+            }
+            return s;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public PostJSON createPost(CreatePostJSON cpj) {
         try{
             Posts p = new Posts();
