@@ -34,7 +34,7 @@
                         </v-col>
 
                         <v-col align="right">
-                          <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
+                          <v-btn :loading="loading" v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
                           <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="margin-left:10px;height:40px" class="white--text" elevation="1" v-on:click="cancelar()" color="#527a7a">Cancelar</v-btn>
                         </v-col>
 
@@ -47,6 +47,7 @@
 
 
 <script>
+import axios from 'axios'
 
 export default {
     name: "newPub",
@@ -55,6 +56,7 @@ export default {
           show:false,
           titulo:'',
           descricao:'',
+          loading:false
         }
     },
     props: {
@@ -62,14 +64,39 @@ export default {
     },
     methods: {
         cancelar() {
-            this.show=false;
-            this.titulo='',
+            this.show=false
+            this.titulo=''
             this.descricao=''
+            this.loading=false
+        },
+        currentDateTime() {
+            const current = new Date();
+            const date = current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate();
+            const time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
+            const dateTime = date +' '+ time;
+            
+            return dateTime;
         },
         submeter() {
-            alert('Submetido com sucesso no id: ' + this.value)
-            this.cancelar();
-        },
+            this.loading = true
+            var json = {}
+            json['idUser'] = 1
+            json['idResource'] = 0
+            json['title'] = this.titulo
+            json['body'] = this.descricao
+            json['createdAt'] = this.currentDateTime()
+            console.log(json)
+            axios.post("http://localhost:8081/api/post", json)
+                .then(() => {
+                    alert('Submetido com sucesso no id: ' + this.value)
+                    this.cancelar();
+                })
+                .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível adicionar nova publicação')
+                    this.cancelar();
+                })
+        }
     }
 }
 

@@ -1,14 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Recurso from '../components/Recurso.vue'
+
 
 Vue.use(VueRouter)
 
 const routes = [
   {
     path: '/',
-    name: 'Recurso',
-    component: Recurso
+    name: 'Recursos',
+    components: require('../components/Recursos.vue')
   }
 ]
 
