@@ -18,6 +18,7 @@ import org.orm.criteria.*;
 
 public class PostsCriteria extends AbstractORMCriteria {
 	public final IntegerExpression idPost;
+	public final StringExpression title;
 	public final StringExpression body;
 	public final TimestampExpression createdAt;
 	public final IntegerExpression idUserId;
@@ -29,6 +30,7 @@ public class PostsCriteria extends AbstractORMCriteria {
 	public PostsCriteria(Criteria criteria) {
 		super(criteria);
 		idPost = new IntegerExpression("idPost", this);
+		title = new StringExpression("title", this);
 		body = new StringExpression("body", this);
 		createdAt = new TimestampExpression("createdAt", this);
 		idUserId = new IntegerExpression("idUser.idUser", this);
