@@ -1,6 +1,5 @@
 package backend.controllers;
 
-import backend.beans.AuthenticationBean;
 import backend.dao.Users;
 import backend.dao.UsersDAO;
 import backend.json.UserJSON;
@@ -8,14 +7,10 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.ejb.EJB;
-import javax.naming.Context;
-import javax.naming.InitialContext;
 import java.nio.file.*;
 
 @RestController
 public class BasicController {
-    @EJB
-    AuthenticationBean ab;
     private static String uploadDirectory = System.getProperty("user.dir")+"\\uploads";
 
     @GetMapping("/test")
@@ -23,7 +18,7 @@ public class BasicController {
         //Context c = new InitialContext();
         //AuthenticationBean aBean = (AuthenticationBean) c.lookup("java:module/AuthenticationEJB");
         Users u = UsersDAO.getUsersByORMID(13);
-        ab.login(u.getEmail(),u.getPassword());
+        //ab.login(u.getEmail(),u.getPassword());
         return new UserJSON(u);
     }
 

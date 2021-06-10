@@ -8,7 +8,6 @@ insert into mydb.roles values(4,"Aluno(a) de Licenciatura","Universidade do Minh
 insert into mydb.roles values(5,"Empregado(a)","Bosch");
 insert into mydb.roles values(6,"Empregado(a)","Primavera");
 
-delete from mydb.users;
 # Users
 insert into mydb.users values (0,"Admin","admin@uminho.pt", "admin", "admin", '2021-01-10 23:59:59', "Sou admin do sistema", "picture", false, 0);
 insert into mydb.users values (1,"Válter Carvalho","1@uminho.pt", "1", "produtor", '2021-02-10 11:20:53', "Sou Aluno de MiEI", "picture", false, 3);
@@ -19,15 +18,12 @@ insert into mydb.users values (5,"Carlinhos Adelaide","5@uminho.pt", "5", "produ
 insert into mydb.users values (6,"Fernanda Urbano","6@uminho.pt", "6", "produtor", '2021-02-01 13:23:23', "Sou Aluno de Bioquímica", "picture", false, 4);
 insert into mydb.users values (7,"Glória Amália","7@uminho.pt", "7", "produtor", '2021-02-13 17:22:50', "Sou Aluno de Sociologia", "picture", false, 4);
 insert into mydb.users values (8,"Ademar Marta","8@uminho.pt", "8", "produtor", '2021-02-15 12:24:50', "Sou empregado full-time", "picture", true, 5);
-insert into mydb.users values (9,,"9@uminho.pt", "Adelina", "Lena", '2021-02-21 19:21:24', "Sou empregado part-time", "picture", false, 6);
-insert into mydb.users values (10,,"10@uminho.pt", "Serafina", "Renato", '2021-02-26 17:21:27', "Sou empregado e trabalho em modo remoto", "picture", false, 5);
-insert into mydb.users values (11,,"11@uminho.pt", "Maria", "Prisma", '2021-01-26 11:21:10', "Sou empregado e trabalho em modo remoto", "picture", false, 5);
-insert into mydb.users values (12,,"12@uminho.pt", "Diana", "Brás", '2021-02-14 09:12:32', "Sou empregado e trabalho no escritório", "picture", true, 5);
-insert into mydb.users values (13,,"13@uminho.pt", "Paulina", "Osvaldo", '2021-02-11 07:12:52', "Sou professor há 3 anos", "picture", false, 2);
-insert into mydb.users values (14,,"14@uminho.pt", "Efigénia", "Cardoso", '2021-01-21 18:22:21', "Sou professor apenas este ano", "picture", true, 2);
-insert into mydb.users values (15,,"15@uminho.pt", "Rafael", "Norberto", '2021-01-11 11:21:22', "Sou professor há 30 anos", "picture", false, 1);
-insert into mydb.users values (16,,"16@uminho.pt", "Gracília", "Afonso", '2021-02-11 12:22:10', "Sou professor há 22 anos", "picture", true, 1);
-insert into mydb.users values (17,,"17@uminho.pt", "Toeodora", "Santos", '2021-01-03 16:11:21', "Sou professor há 1 ano", "picture", false, 2);
+insert into mydb.users values (9,"Adelina Lena","9@uminho.pt", "9", "produtor", '2021-02-21 19:21:24', "Sou empregado part-time", "picture", false, 6);
+insert into mydb.users values (10,"Serafina Renato","10@uminho.pt", "10", "produtor", '2021-02-26 17:21:27', "Sou empregado e trabalho em modo remoto", "picture", false, 5);
+insert into mydb.users values (11,"Maria Prisma","11@uminho.pt", "11", "produtor", '2021-01-26 11:21:10', "Sou empregado e trabalho em modo remoto", "picture", false, 5);
+insert into mydb.users values (12,"Diana Brás","12@uminho.pt", "12", "produtor", '2021-02-14 09:12:32', "Sou empregado e trabalho no escritório", "picture", true, 5);
+insert into mydb.users values (13,"Paulina Osvaldo","13@uminho.pt", "13", "produtor", '2021-02-11 07:12:52', "Sou professor há 3 anos", "picture", false, 2);
+insert into mydb.users values (14,"Efigénia Cardoso","14@uminho.pt", "14", "produtor", '2021-01-21 18:22:21', "Sou professor apenas este ano", "picture", true, 2);
+insert into mydb.users values (15,"Rafael Norberto","15@uminho.pt", "15", "produtor", '2021-01-11 11:21:22', "Sou professor há 30 anos", "picture", true, 1);
 
-
-#
+# Posts
