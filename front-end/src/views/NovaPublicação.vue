@@ -69,21 +69,12 @@ export default {
             this.descricao=''
             this.loading=false
         },
-        currentDateTime() {
-            const current = new Date();
-            const date = current.getFullYear()+'-'+(current.getMonth()+1)+'-'+current.getDate();
-            const time = current.getHours() + ":" + current.getMinutes() + ":" + current.getSeconds();
-            const dateTime = date +' '+ time;
-            
-            return dateTime;
-        },
         submeter() {
             var bodyFormData = new FormData();
             bodyFormData.append('idUser', 1);
             bodyFormData.append('idResource', 0)
             bodyFormData.append('title',this.titulo)
             bodyFormData.append('body',this.descricao)
-            console.log(new Date().toISOString().slice(0, 19).replace('T', ' '))
             bodyFormData.append('createdAt',new Date().toISOString().slice(0, 19).replace('T', ' '))
             axios({
                 method: "post",
