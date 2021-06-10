@@ -15,5 +15,4 @@ public class BackendApplication {
                 .singletonMap("server.port", "8081"));
         app.run(args);
     }
-
 }

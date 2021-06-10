@@ -78,20 +78,24 @@ export default {
             return dateTime;
         },
         submeter() {
-            this.loading = true
-            var json = {}
-            json['idUser'] = 1
-            json['idResource'] = 0
-            json['title'] = this.titulo
-            json['body'] = this.descricao
-            json['createdAt'] = this.currentDateTime()
-            console.log(json)
-            axios.post("http://localhost:8081/api/post", json)
-                .then(() => {
+            var bodyFormData = new FormData();
+            bodyFormData.append('idUser', 1);
+            bodyFormData.append('idResource', 0)
+            bodyFormData.append('title',this.titulo)
+            bodyFormData.append('body',this.descricao)
+            console.log(new Date().toISOString().slice(0, 19).replace('T', ' '))
+            bodyFormData.append('createdAt',new Date().toISOString().slice(0, 19).replace('T', ' '))
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/",
+                data: bodyFormData,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then(() => {
                     alert('Submetido com sucesso no id: ' + this.value)
                     this.cancelar();
                 })
-                .catch(err => {
+            .catch(err => {
                     console.log(err)
                     alert('Não foi possível adicionar nova publicação')
                     this.cancelar();

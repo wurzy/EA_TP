@@ -16,6 +16,7 @@ public class PostBean {
     public PostJSON createPost(CreatePostJSON cpj) {
         try{
             Posts p = new Posts();
+            p.setTitle(cpj.getTitle());
             p.setBody(cpj.getBody());
             p.setCreatedAt(cpj.getCreatedAt());
             p.setIdResource(ResourcesDAO.getResourcesByORMID(cpj.getIdResource()));

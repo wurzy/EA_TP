@@ -2,6 +2,7 @@ package backend.json;
 import java.sql.Timestamp;
 
 public class CreatePostJSON {
+    String title;
     private String body;
     private java.sql.Timestamp createdAt;
     private int idUser;
@@ -39,7 +40,12 @@ public class CreatePostJSON {
         this.idResource = idResource;
     }
 
-    public CreatePostJSON(String body, Timestamp createdAt, int idUser, int idResource) {
+    public String getTitle() {
+        return title;
+    }
+
+    public CreatePostJSON(String title, String body, Timestamp createdAt, int idUser, int idResource) {
+        this.title = title;
         this.body = body;
         this.createdAt = createdAt;
         this.idUser = idUser;

@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.ejb.EJB;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/post")
 public class PostController {
@@ -18,8 +19,8 @@ public class PostController {
     }
 
     @PostMapping("/")
-    public PostJSON create(@RequestParam String body, @RequestParam java.sql.Timestamp createdAt, @RequestParam int idUser, @RequestParam int idResource){
-        return pb.createPost(new CreatePostJSON(body,createdAt,idUser,idResource));
+    public PostJSON create(@RequestParam String title, @RequestParam String body, @RequestParam java.sql.Timestamp createdAt, @RequestParam int idUser, @RequestParam int idResource){
+        return pb.createPost(new CreatePostJSON(title,body,createdAt,idUser,idResource));
     }
 
     @PostMapping("/comment/{id}")
