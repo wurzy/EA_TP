@@ -1,17 +1,22 @@
 <template>
   <v-app id="app">
+    <Navbar/>
     <router-view></router-view>
   </v-app>
 </template>
 
 <script>
+import Navbar from './components/Navbar.vue' 
 
 export default {
 
   name: 'App',
-   data() {
+  data() {
     return {
     }
+  },
+  components:{
+    Navbar
   }
 };
 </script>
@@ -27,6 +32,7 @@ html, body {
 
 #app {
   font-family: 'Noto Sans JP', sans-serif;
+  height: 64px;
 }
 
 body {

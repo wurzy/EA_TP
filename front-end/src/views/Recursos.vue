@@ -42,8 +42,8 @@
 
 
 <script>
-import AddRec from '@/components/AdicionarRecurso.vue'
-import NewPub from '@/components/NovaPublicação.vue'
+import AddRec from '@/views/AdicionarRecurso.vue'
+import NewPub from '@/views/NovaPublicação.vue'
 
 export default {
     name: 'recursos',
