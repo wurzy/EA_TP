@@ -19,7 +19,7 @@
             <router-link class="hyperlink" to="/recursos">Recursos</router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Utilizadores</router-link>
+            <router-link class="hyperlink" to="/utilizadores">Utilizadores</router-link>
          </v-btn>
         </v-toolbar-items>
         <v-spacer></v-spacer>
