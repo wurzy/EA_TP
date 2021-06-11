@@ -6,7 +6,6 @@
       <v-toolbar app color="#57a2bf" class="hidden-xs-and-down">
         <v-img
         class="logo"
-        lazy-src="../assets/redu.png"
         max-height="40"
         max-width="40"
         src="../assets/redu.png"

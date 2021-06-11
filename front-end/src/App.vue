@@ -27,11 +27,11 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP&display=swap');
 
 html, body {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 #app {
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: Arial, Helvetica, sans-serif;
   height: 64px;
 }
 
