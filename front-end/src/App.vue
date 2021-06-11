@@ -36,7 +36,6 @@ html, body {
 }
 
 body {
-    overflow: auto;
     height: 100vh;
 } 
 
