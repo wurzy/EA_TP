@@ -48,12 +48,13 @@ export default {
     name: 'users',
     data() {
         return { 
-            selected: [],
+            filtrou: false,
+            filtrado: [],
             filtro: '',
             limite:9,
             list:[],
             users: [],
-            all:false
+            all: false
         }
     },
     components: {
@@ -67,26 +68,43 @@ export default {
         .then(data => {
             this.users = data.data;
             this.list = this.users.slice(0,this.limite);
-            console.log(this.users)
         })
         .catch(err => {
             console.log(err)
         })
     },
+    watch: {
+        'all' : function() {
+            this.filtrou ? this.list = this.filtrado : this.list = this.users
+            if (!this.all) { this.list = this.list.slice(0,this.limite) }
+        }
+    },
     methods: {
         handleMore(){
-            this.list = this.users
             this.all = true
         },
         handleLess(){
-            this.list = this.users.slice(0,this.limite)
             this.all = false
         },
         handleClick(value) {
-          this.$router.push('/utilizadores/' + value)      
+            this.$router.push('/utilizadores/' + value)      
+        },
+        filtrar(obj) {
+            var name = obj.name
+            var re = new RegExp(this.filtro, 'i');
+            return name.match(re)
         },
         search() {
-            console.log(this.filtro)
+            if (this.filtro!=""){
+                this.filtrado = this.users.filter(this.filtrar)
+                this.list = this.filtrado.slice(0,this.limite)
+                this.filtrou = true
+            }
+            else {
+                this.list = this.users.slice(0,this.limite) 
+                this.filtrou = false
+            }
+            this.all = false
         }
     }
 }
