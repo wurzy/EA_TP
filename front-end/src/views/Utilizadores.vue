@@ -1,0 +1,108 @@
+<template>
+  <div id="users" class="users" >
+
+    <v-row >
+        <v-col cols=2 offset="9">
+            <v-text-field @keydown.enter="search()" label="Filtro" v-model="filtro"></v-text-field>
+        </v-col>
+        <v-icon @click="search()"> mdi-magnify </v-icon>
+    </v-row>
+
+    <v-container style="max-width: 85%">
+      <v-row no-gutters >
+        <v-col v-for="n in list" :key="n.name" cols="12" sm="4">
+          <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idUser)">
+            <v-row>
+              <v-col cols="12" sm="4">
+                  <v-avatar size="100">
+                      <v-img v-if="n.picture" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                      <v-img v-else src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                  </v-avatar>
+              </v-col>
+              
+              <v-col cols="12" sm="8" >
+                  <span style="font-size: 20px; color: #53a6bf;"> {{n.name}} <br/> </span>
+                  <span style="font-size: 14px;"> <b>Estatuto: </b> {{n.role.type}} <br/> </span>
+                  <span style="font-size: 14px;"> <b>Filiação: </b> {{n.role.affiliation}} <br/> </span>
+                  <span style="font-size: 14px;"> <i> Registado desde {{n.registerDate.split("T")[0]}} </i></span>
+              </v-col>
+            </v-row>
+          </v-card> 
+        </v-col>
+      </v-row>
+    </v-container>
+
+    <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
+    <v-btn v-else :style="{left: '50%', transform:'translateX(-50%)'}" @click="handleMore"> Ver mais</v-btn> 
+
+  </div>
+</template>
+
+
+
+
+<script>
+import axios from 'axios'
+
+export default {
+    name: 'users',
+    data() {
+        return { 
+            selected: [],
+            filtro: '',
+            limite:9,
+            list:[],
+            users: [],
+            all:false
+        }
+    },
+    components: {
+    },
+    created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/user/",
+            headers: { "Content-Type": "multipart/form-data" },
+        })
+        .then(data => {
+            this.users = data.data;
+            this.list = this.users.slice(0,this.limite);
+            console.log(this.users)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+    },
+    methods: {
+        handleMore(){
+            this.list = this.users
+            this.all = true
+        },
+        handleLess(){
+            this.list = this.users.slice(0,this.limite)
+            this.all = false
+        },
+        handleClick(value) {
+          this.$router.push('/utilizadores/' + value)      
+        },
+        search() {
+            console.log(this.filtro)
+        }
+    }
+}
+
+</script>
+
+
+
+
+<style>
+
+.user {
+    text-align: left;
+    border-radius: 5px;
+    margin: 10px;
+}
+
+
+</style>
