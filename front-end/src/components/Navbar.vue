@@ -25,7 +25,7 @@
         <v-spacer></v-spacer>
         <v-toolbar-items>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Perfil</router-link>
+            <router-link class="hyperlink" to="/perfil">Perfil</router-link>
          </v-btn>
          <v-btn class="navbar-button">
             <router-link class="hyperlink" to="/">Logout</router-link>
