@@ -3,13 +3,13 @@
 
         <v-container v-if="pub" style="padding: 40px 80px 0px 80px;">
 
-            <v-row>
+            <v-row >
                 <v-col cols="12" sm="2" style="justify-items: center; display: flex; flex-direction: column; justify-content: center;">
                     <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + pub.user.picture"></v-img>
                 </v-col>
-                <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;">
+                <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;" >
                     <span style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
-                    <span> <b>Recurso: </b>{{ pub.resource.title }} <br/> </span>
+                    <span > <b>Recurso: </b> {{ pub.resource.title }} <br/> </span>
                     <span> {{ pub.user.name }} há {{ pub.createdAt.split("T")[0] }} </span>
                 </v-col>
             </v-row>
@@ -62,9 +62,25 @@ export default {
         }
     },
     methods: {
-        addComment() {  
-            console.log(this.com)
-        },
+        addComment() {
+            var json = {};
+            json['idUser'] = 1
+            json['body'] = this.com
+            json['createdAt'] = new Date().toISOString()
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/comment/" + this.$route.params.id,
+                data: json
+            })
+            .then(() => {
+                    alert('Comentário efetuado com sucesso!')
+                    this.$router.go()
+                })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível adicionar novo comentário')
+                })
+        }
     },
     created() {
         axios({
@@ -73,7 +89,6 @@ export default {
         })
         .then(data => {
             this.pub = data.data;
-            console.log(data.data)
         })
         .catch(err => {
             console.log(err)

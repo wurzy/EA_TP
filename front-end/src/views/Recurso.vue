@@ -92,6 +92,13 @@
                 </v-col>
             </v-row>
 
+
+            <v-row style="margin-top:40px">
+                <v-col align="right">
+                    <NewPub :value="item.idResource"/>
+                </v-col>
+            </v-row>
+
             <v-container style="margin-top:90px;max-width: 85%">
               <v-row no-gutters >
                 <v-col v-for="n in item.posts" :key="n.name" cols="12" sm="4">
@@ -117,6 +124,7 @@
 
 <script>
 import axios from 'axios'
+import NewPub from '@/views/NovaPublicação.vue'
 
 export default {
     name: 'Recurso',
@@ -132,6 +140,9 @@ export default {
                 { text: 'Visualizar', align: 'center',sortable: false, value: 'url' }
             ],  
         }
+    },
+    components: {
+        NewPub
     },
     methods: {
         updateSelected(value) {
