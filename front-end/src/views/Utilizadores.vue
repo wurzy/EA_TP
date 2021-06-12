@@ -32,8 +32,10 @@
       </v-row>
     </v-container>
 
-    <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
-    <v-btn v-else :style="{left: '50%', transform:'translateX(-50%)'}" @click="handleMore"> Ver mais</v-btn> 
+    <div v-if="maiorQueLimite">
+        <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
+        <v-btn v-else :style="{left: '50%', transform:'translateX(-50%)'}" @click="handleMore"> Ver mais</v-btn> 
+    </div>
 
   </div>
 </template>
@@ -54,7 +56,8 @@ export default {
             limite:9,
             list:[],
             users: [],
-            all: false
+            all: false,
+            maiorQueLimite: false
         }
     },
     components: {
@@ -68,6 +71,7 @@ export default {
         .then(data => {
             this.users = data.data;
             this.list = this.users.slice(0,this.limite);
+            this.users.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
         })
         .catch(err => {
             console.log(err)
@@ -97,10 +101,12 @@ export default {
         search() {
             if (this.filtro!=""){
                 this.filtrado = this.users.filter(this.filtrar)
+                this.filtrado.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
                 this.list = this.filtrado.slice(0,this.limite)
                 this.filtrou = true
             }
             else {
+                this.users.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
                 this.list = this.users.slice(0,this.limite) 
                 this.filtrou = false
             }
