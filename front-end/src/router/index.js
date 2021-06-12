@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Utilizadores from '../views/Utilizadores.vue'
 import Recursos from '../views/Recursos.vue'
+import Publicacao from '../views/Publicacao.vue'
 import Home from '../views/Home.vue'
 import Perfil from '../views/Perfil.vue'
 
@@ -28,6 +29,11 @@ const routes = [
     path: '/perfil',
     name: 'Perfil',
     component: Perfil
+  },
+  {
+    path: '/publicacao',
+    name: 'Publicacao',
+    component: Publicacao
   }
 ]
 
