@@ -31,7 +31,7 @@ const routes = [
     component: Perfil
   },
   {
-    path: '/publicacao',
+    path: '/publicacao/:id',
     name: 'Publicacao',
     component: Publicacao
   }

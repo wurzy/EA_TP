@@ -21,19 +21,23 @@
                 v-model="selected"
                 :headers="headers"
                 :items="resources"
-                :items-per-page="8"
-                class="elevation-1"
+                :items-per-page="5"
+                class="elevation-1 click"
+                :value="null"
                 @click:row="handleClick"
-                item-key="titulo">
-                    <template v-slot:[`item.idResource`]="{ value}" >
+                item-key="title">
+                    <template v-slot:[`item.idResource`]="{ value }" >
                         <NewPub :value="value"/>
                     </template>
-                    <template v-slot:[`item.ratings`]="{ value}" >
-                        {{getRating(value)}}
+                    <template v-slot:[`item.ratings`]="{ value }" >
+                        <div class="stars" :data-percent="getRating(value)">
+                            ★★★★★
+                        </div>
                     </template>
                     <template v-slot:[`item.lastModifiedAt`]="{ value}" >
                         {{value.split("T")[0]}}
                     </template>
+
                 </v-data-table>
             </v-col>
         </v-row>
@@ -50,6 +54,8 @@ import AddRec from '@/views/AdicionarRecurso.vue'
 import NewPub from '@/views/NovaPublicação.vue'
 import axios from 'axios'
 
+
+
 export default {
     name: 'recursos',
     data() {
@@ -57,21 +63,16 @@ export default {
             selected: [],
             filtro: '',
             resources: [],
+            resourcesInitial: [],
             headers: [
                 { text: 'Título', align: 'center', value: 'title'},
                 { text: 'Tipo', align: 'center',value: 'resourceType' },
-               // { text: 'Autor',align: 'center', value: 'autor' },
-                { text: 'Classificação',align: 'center', value: 'ratings' },
+                { text: 'Autor',align: 'center', value: 'idUser.name' },
+                { text: 'Classificação', sortable: false, align: 'center', value: 'ratings' },
                 { text: 'Nº de downloads',align: 'center', value: 'nDownloads' },
                 { text: 'Data de modificação',align: 'center', value: 'lastModifiedAt' },
                 { text: '',align: 'center', sortable: false, value: 'idResource' }
             ],
-            items: [
-                {titulo: 'Este é o titulo 1', tipo: 'type 1', autor: 'Joao', classificacao: '9.8', ndownloads: '4', lastModificacao: '2018-2-13', id: 'a'},
-                {titulo: 'Este é o titulo 2', tipo: 'type 2', autor: 'Ricardo', classificacao: '16.8', ndownloads: '6', lastModificacao: '2021-2-24', id: 'b'},
-                {titulo: 'Este é o titulo 3', tipo: 'type 1', autor: 'Abel', classificacao: '3.2', ndownloads: '0', lastModificacao: '2016-11-17', id: 'c'},
-                {titulo: 'Este é o titulo 4', tipo: 'type 0', autor: 'Joaquim', classificacao: '14.4', ndownloads: '1', lastModificacao: '2012-3-3', id: 'e'}
-            ]
         }
     },
     components: {
@@ -80,26 +81,45 @@ export default {
     },
     methods: {
         handleClick(value) {
-          this.$router.push('/recurso/' + value.id)      
-        },
-        search() {
-            console.log(this.filtro)
-        },
-        novoRecurso() {
-            console.log("vou adicionar")
+          this.$router.push('/recursos/' + value.idResource)      
         },
         download() {
-            console.log(JSON.stringify(this.selected))
+            this.selected.forEach(elem => {
+                this.incrementaDownload(elem.idResource)
+            })
         },
-        novaPublicacao(value) {
-            console.log(value)
+        incrementaDownload(id){
+            axios({
+            method: "post",
+            url: "http://localhost:8081/api/resource/inc_downloads/" + id,
+            })
+            .then(data => {
+                console.log(data.data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
         getRating(lista){
             var rating = 0
             lista.forEach(elem => rating += elem.rating)
-            console.log(rating / lista.length)
-            return rating / lista.length
-        }
+            rating = rating / lista.length
+            if (lista.length==0) return 0
+            else return rating
+        },
+        filtrar(obj) {
+            var name = obj.title
+            var re = new RegExp(this.filtro, 'i');
+            return name.match(re)
+        },
+        search() {
+            if (this.filtro!=""){
+                this.resources = this.resourcesInitial.filter(this.filtrar)
+            }
+            else {
+                this.resources = this.resourcesInitial 
+            }
+         }
     },
     created() {
         axios({
@@ -108,6 +128,7 @@ export default {
         })
         .then(data => {
             this.resources = data.data;
+            this.resourcesInitial = data.data;
         })
         .catch(err => {
             console.log(err)
@@ -122,9 +143,18 @@ export default {
 
 <style>
 
+@import '../assets/rating.css';
+
 #mytable table thead {
   background: #80dfff;
 }
 
+.click {
+	position:relative;
+}
+
+.click[value="null"]:BEFORE {
+	display:none;
+}
 
 </style>

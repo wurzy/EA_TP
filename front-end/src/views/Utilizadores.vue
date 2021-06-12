@@ -69,7 +69,6 @@ export default {
         axios({
             method: "get",
             url: "http://localhost:8081/api/user/",
-            headers: { "Content-Type": "multipart/form-data" },
         })
         .then(data => {
             this.users = data.data;
