@@ -11,7 +11,7 @@
     <v-container style="max-width: 85%">
       <v-row no-gutters >
         <v-col v-for="n in list" :key="n.name" cols="12" sm="4">
-          <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idUser)">
+          <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idUser)" min-width="400px">
             <v-row>
               <v-col cols="12" sm="4">
                   <v-avatar size="100">
@@ -31,6 +31,10 @@
         </v-col>
       </v-row>
     </v-container>
+
+    <div v-if="list.length==0">
+        <h1 style="text-align:center"> Sem Resultados! </h1>
+    </div>
 
     <div v-if="maiorQueLimite">
         <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
@@ -111,6 +115,19 @@ export default {
                 this.filtrou = false
             }
             this.all = false
+        },
+        async getImage(name){
+            await axios({
+            method: "get",
+            url: "http://localhost:8081/api/user/image/thumbnail/" + name,
+            headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then(data => {
+                console.log(data)
+            })
+            .catch(err => {
+                console.log(err)
+            })
         }
     }
 }

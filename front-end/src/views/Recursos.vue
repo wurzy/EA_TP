@@ -1,7 +1,5 @@
 <template>
-  <div id="recursos" class="recursos" >
-
-    <h1>Recursos</h1>
+  <div id="recursos"  >
 
     <v-container>
         <v-row align="center" style="margin-top:40px">
@@ -97,17 +95,6 @@ export default {
 
 
 <style>
-
-.recursos {
-    text-align: center;
-    background-color: gray;
-    height: 100vh;
-}
-
-.recursos h1{
-    margin-top:10px
-}
-
 
 #mytable table thead {
   background: #80dfff;
