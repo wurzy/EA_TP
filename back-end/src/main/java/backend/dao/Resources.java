@@ -28,6 +28,9 @@ public class Resources {
 		else if (key == ORMConstants.KEY_RESOURCES_UPDATES) {
 			return ORM_updates;
 		}
+		else if (key == ORMConstants.KEY_RESOURCES_USERS) {
+			return ORM_updates;
+		}
 		
 		return null;
 	}
@@ -35,6 +38,9 @@ public class Resources {
 	private void this_setOwner(Object owner, int key) {
 		if (key == ORMConstants.KEY_RESOURCES_IDRESOURCETYPE) {
 			this.idResourceType = (Resourcetypes) owner;
+		}
+		else if(key == ORMConstants.KEY_RESOURCES_USERS){
+			this.idUser = (Users) owner;
 		}
 	}
 	
@@ -66,7 +72,9 @@ public class Resources {
 	private int nDownloads;
 	
 	private boolean available;
-	
+
+	private Users idUser;
+
 	private Resourcetypes idResourceType;
 	
 	private java.util.Set ORM_files = new java.util.HashSet();
@@ -76,7 +84,17 @@ public class Resources {
 	private java.util.Set ORM_ratings = new java.util.HashSet();
 	
 	private java.util.Set ORM_updates = new java.util.HashSet();
-	
+
+	private java.util.Set ORM_users = new java.util.HashSet();
+
+	public Users getIdUser() {
+		return idUser;
+	}
+
+	public void setIdUser(Users idUser) {
+		this.idUser = idUser;
+	}
+
 	private void setIdResource(int value) {
 		this.idResource = value;
 	}
@@ -180,6 +198,10 @@ public class Resources {
 	private void setORM_Files(java.util.Set value) {
 		this.ORM_files = value;
 	}
+
+	private void setORM_users(java.util.Set value) {
+		this.ORM_users = value;
+	}
 	
 	private java.util.Set getORM_Files() {
 		return ORM_files;
@@ -193,6 +215,10 @@ public class Resources {
 	
 	private java.util.Set getORM_Posts() {
 		return ORM_posts;
+	}
+
+	private java.util.Set getORM_users() {
+		return ORM_users;
 	}
 	
 	public final PostsSetCollection posts = new PostsSetCollection(this, _ormAdapter, ORMConstants.KEY_RESOURCES_POSTS, ORMConstants.KEY_POSTS_IDRESOURCE, ORMConstants.KEY_MUL_ONE_TO_MANY);
@@ -216,7 +242,7 @@ public class Resources {
 	}
 	
 	public final UpdatesSetCollection updates = new UpdatesSetCollection(this, _ormAdapter, ORMConstants.KEY_RESOURCES_UPDATES, ORMConstants.KEY_UPDATES_IDRESOURCE, ORMConstants.KEY_MUL_ONE_TO_MANY);
-	
+	public final UsersSetCollection users = new UsersSetCollection(this, _ormAdapter, ORMConstants.KEY_RESOURCES_USERS, ORMConstants.KEY_UPDATES_IDRESOURCE, ORMConstants.KEY_MUL_ONE_TO_MANY);
 	public String toString() {
 		return String.valueOf(getIdResource());
 	}

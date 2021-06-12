@@ -17,10 +17,12 @@ public class ResourceJSON {
     private int nDownloads;
     private boolean available;
     private String resourceType;
+    private UserJSON idUser;
     private RatingsJSON[] ratings;
     private FileJSON[] files;
 
     public ResourceJSON(Resources r, Ratings[] rs, Files[] fs) {
+        this.idUser = new UserJSON(r.getIdUser());
         this.idResource = r.getIdResource();
         this.title = r.getTitle();
         this.description = r.getDescription();
@@ -39,6 +41,10 @@ public class ResourceJSON {
         for(int i = 0; i < fs.length; i++){
             this.files[i] = new FileJSON(fs[i]);
         }
+    }
+
+    public UserJSON getIdUser() {
+        return idUser;
     }
 
     public FileJSON[] getFiles() {

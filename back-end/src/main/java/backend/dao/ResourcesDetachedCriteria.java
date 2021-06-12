@@ -28,6 +28,8 @@ public class ResourcesDetachedCriteria extends AbstractORMDetachedCriteria {
 	public final BooleanExpression available;
 	public final IntegerExpression idResourceTypeId;
 	public final AssociationExpression idResourceType;
+	public final IntegerExpression idUserId;
+	public final AssociationExpression idUser;
 	public final CollectionExpression files;
 	public final CollectionExpression posts;
 	public final CollectionExpression ratings;
@@ -46,6 +48,8 @@ public class ResourcesDetachedCriteria extends AbstractORMDetachedCriteria {
 		available = new BooleanExpression("available", this.getDetachedCriteria());
 		idResourceTypeId = new IntegerExpression("idResourceType.idResourceType", this.getDetachedCriteria());
 		idResourceType = new AssociationExpression("idResourceType", this.getDetachedCriteria());
+		idUserId = new IntegerExpression("idUser.idUser", this.getDetachedCriteria());
+		idUser = new AssociationExpression("idUser", this.getDetachedCriteria());
 		files = new CollectionExpression("ORM_Files", this.getDetachedCriteria());
 		posts = new CollectionExpression("ORM_Posts", this.getDetachedCriteria());
 		ratings = new CollectionExpression("ORM_Ratings", this.getDetachedCriteria());
@@ -65,6 +69,8 @@ public class ResourcesDetachedCriteria extends AbstractORMDetachedCriteria {
 		available = new BooleanExpression("available", this.getDetachedCriteria());
 		idResourceTypeId = new IntegerExpression("idResourceType.idResourceType", this.getDetachedCriteria());
 		idResourceType = new AssociationExpression("idResourceType", this.getDetachedCriteria());
+		idUserId = new IntegerExpression("idUser.idUser", this.getDetachedCriteria());
+		idUser = new AssociationExpression("idUser", this.getDetachedCriteria());
 		files = new CollectionExpression("ORM_Files", this.getDetachedCriteria());
 		posts = new CollectionExpression("ORM_Posts", this.getDetachedCriteria());
 		ratings = new CollectionExpression("ORM_Ratings", this.getDetachedCriteria());

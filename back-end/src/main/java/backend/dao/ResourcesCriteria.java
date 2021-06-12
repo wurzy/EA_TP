@@ -28,6 +28,8 @@ public class ResourcesCriteria extends AbstractORMCriteria {
 	public final BooleanExpression available;
 	public final IntegerExpression idResourceTypeId;
 	public final AssociationExpression idResourceType;
+	public final IntegerExpression idUserId;
+	public final AssociationExpression idUser;
 	public final CollectionExpression files;
 	public final CollectionExpression posts;
 	public final CollectionExpression ratings;
@@ -46,6 +48,8 @@ public class ResourcesCriteria extends AbstractORMCriteria {
 		available = new BooleanExpression("available", this);
 		idResourceTypeId = new IntegerExpression("idResourceType.idResourceType", this);
 		idResourceType = new AssociationExpression("idResourceType", this);
+		idUserId = new IntegerExpression("idUser.idUser", this);
+		idUser = new AssociationExpression("idUser", this);
 		files = new CollectionExpression("ORM_Files", this);
 		posts = new CollectionExpression("ORM_Posts", this);
 		ratings = new CollectionExpression("ORM_Ratings", this);

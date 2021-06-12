@@ -55,5 +55,6 @@ public interface ORMConstants extends org.orm.util.ORMBaseConstants {
 	final int KEY_USERS_RATINGS = -1892983009;
 	
 	final int KEY_USERS_UPDATES = 1183956339;
-	
+
+	final int KEY_RESOURCES_USERS = -1263936439;
 }
