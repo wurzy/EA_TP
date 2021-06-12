@@ -15,8 +15,7 @@
             <v-row>
               <v-col cols="12" sm="4">
                   <v-avatar size="100">
-                      <v-img v-if="n.picture" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
-                      <v-img v-else src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                      <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + n.picture"></v-img>
                   </v-avatar>
               </v-col>
               
@@ -115,19 +114,6 @@ export default {
                 this.filtrou = false
             }
             this.all = false
-        },
-        async getImage(name){
-            await axios({
-            method: "get",
-            url: "http://localhost:8081/api/user/image/thumbnail/" + name,
-            headers: { "Content-Type": "multipart/form-data" },
-            })
-            .then(data => {
-                console.log(data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
         }
     }
 }
@@ -139,7 +125,7 @@ export default {
 
 <style>
 
-.user {
+#users > .user {
     text-align: left;
     border-radius: 5px;
     margin: 10px;
