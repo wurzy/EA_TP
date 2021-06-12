@@ -85,20 +85,9 @@ export default {
         },
         download() {
             this.selected.forEach(elem => {
-                this.incrementaDownload(elem.idResource)
+                console.log(elem)
             })
-        },
-        incrementaDownload(id){
-            axios({
-            method: "post",
-            url: "http://localhost:8081/api/resource/inc_downloads/" + id,
-            })
-            .then(data => {
-                console.log(data.data)
-            })
-            .catch(err => {
-                console.log(err)
-            })
+            //this.$router.go()
         },
         getRating(lista){
             var rating = 0

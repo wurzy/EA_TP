@@ -152,6 +152,7 @@
 
 
 <script>
+import axios from 'axios'
 
 export default {
     name: "addRecurso",
@@ -194,8 +195,28 @@ export default {
             this.files=[]
         },
         submeter() {
-            alert('Submetido com sucesso')
-            this.cancelar();
+            var bodyFormData = new FormData();
+            bodyFormData.append('idUser', 1);
+            bodyFormData.append('idResource', 0)
+            bodyFormData.append('title',this.titulo)
+            bodyFormData.append('body',this.descricao)
+            bodyFormData.append('createdAt',new Date().toISOString().slice(0, 19).replace('T', ' '))
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/resource/",
+                data: bodyFormData,
+                headers: { "Content-Type": "multipart/form-data" },
+            })
+            .then(data => {
+                    alert('Recurso adicionado com sucesso!')
+                    this.cancelar();
+                    this.$router.push('/recursos/' + data.data.idResource)
+                })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível adicionar novo recurso')
+                    this.cancelar();
+                })
         },
         remove(value) {
             var index = this.files.map(function(item) { return item.lastModified; }).indexOf(value);

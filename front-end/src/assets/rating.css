@@ -2,9 +2,8 @@
 	display:inline-block;
 	width:auto;
 	position:relative;
-	font-size:28px;
+	font-size:22px;
     margin:5px;
-    z-index:0px;
 }
 
 .stars:BEFORE {

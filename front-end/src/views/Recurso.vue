@@ -13,8 +13,8 @@
             </v-card>
         </v-dialog>
 
-        <v-container>
-            <h1> {{item.titulo}}</h1>
+        <v-container v-if="item">
+            <h1> {{item.title}}</h1>
 
             <v-row style="padding: 70px 0 0 0">
                 <v-col cols=2 offset=2 class="pa-0" @click="updateSelected('info')">   
@@ -35,24 +35,25 @@
                     <v-card v-if="this.selected=='info'" elevation="0" outlined style="background-color: inherit;text-align: left;">
                         <v-row >
                             <v-col cols=6 class="pa-10">
-                                <b>Tipo: </b> {{this.item.tipo}}<br>
+                                <b>Tipo: </b> {{this.item.resourceType}}<br>
                                 <br>
-                                <b>Descrição: </b> {{this.item.descricao}}<br>
+                                <b>Descrição: </b> {{this.item.description}}<br>
                                 <br>
-                                <b>Data de Criação: </b> {{this.item.dataCriacao}}<br>
+                                <b>Data de Criação: </b> {{this.item.createdAt.split("T")[0]}}<br>
                                 <br>
-                                <b>Data de Registo: </b> {{this.item.dataRegisto}}<br>
+                                <b>Data de Registo: </b> {{this.item.registeredAt.split("T")[0]}}<br>
                                 <br>
-                                <b>Classificação: </b> {{this.item.classificacao}}<br>
+                                <b>Classificação: </b> {{ getRating(this.item.ratings) }}
+                                <br>
                             </v-col>
                             <v-col cols=6 class="pa-10">
-                                <b>Autor: </b> {{this.item.autor}}<br>
+                                <b>Autor: </b> {{this.item.idUser.name}}<br>
                                 <br>
-                                <b>Ultima Modificação: </b> {{this.item.lastModificacao}}<br>
+                                <b>Ultima Modificação: </b> {{this.item.lastModifiedAt.split("T")[0]}}<br>
                                 <br>
-                                <b>Número de publicações: </b> {{this.item.npubs}}<br>
+                                <b>Número de publicações: </b> {{this.item.posts.length}} <br>
                                 <br>
-                                <b>Número de downloads: </b> {{this.item.ndownloads}}<br>
+                                <b>Número de downloads: </b> {{this.item.nDownloads}}<br>
                                 <br>
                                 <b>Tamanho total: </b> {{getTotalSize()}} KB<br>
                             </v-col>
@@ -91,6 +92,22 @@
                 </v-col>
             </v-row>
 
+            <v-container style="margin-top:90px;max-width: 85%">
+              <v-row no-gutters >
+                <v-col v-for="n in item.posts" :key="n.name" cols="12" sm="4">
+                  <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idPost)" min-width="100px">
+                    <v-row>
+                       <v-col cols="12">
+                          <span style="font-size: 20px; color: #53a6bf;"> {{n.title}} <br/> </span>
+                          <span style="font-size: 14px;"> <b>Autor: </b> {{n.user.name}} <br/> </span>
+                          <span style="font-size: 14px;"> <i> Publicado em {{n.createdAt.split("T")[0]}} </i></span>
+                      </v-col>
+                    </v-row>
+                  </v-card> 
+                </v-col>
+              </v-row>
+            </v-container>
+
         </v-container>
 
     </div>
@@ -99,6 +116,7 @@
 
 
 <script>
+import axios from 'axios'
 
 export default {
     name: 'Recurso',
@@ -106,24 +124,8 @@ export default {
         return { 
             ficheiroAtual: null,
             hover: false,
-            selected: "info",
-            item: {
-                titulo: 'Este é o titulo 1', 
-                tipo: 'type 1', 
-                autor: 'Joao', 
-                classificacao: '9.8', 
-                ndownloads: '4', 
-                npubs: '1',
-                lastModificacao: '2018-2-13', 
-                id: 'a',
-                dataCriacao: '2015-2-1',
-                dataRegisto: '2015-1-26',
-                descricao: 'esta é a sua desrição, vamos fazer parecer maior para ver se cabe no sitio dela',
-                files: [
-                    { "lastModified": 1620228345351, "lastModifiedDate": "2021-05-05T15:25:45.351Z", "name": "brasil2.png", "size": 57139, "type": "image/png", "url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/05/Flag_of_Brazil.svg/1200px-Flag_of_Brazil.svg.png" },
-                    { "lastModified": 1605831821740, "lastModifiedDate": "2020-11-20T00:23:41.740Z", "name": "Ficha_exercícios_1.pdf", "size": 605385, "type": "application/pdf", "url": "http://www.africau.edu/images/default/sample.pdf" }
-                ]
-            },     
+            selected: "info",     
+            item: '',
             headers: [
                 { text: 'Nome', sortable: false, value: 'name'},
                 { text: 'Tamanho', align: 'center',sortable: false, value: 'size' },
@@ -134,6 +136,9 @@ export default {
     methods: {
         updateSelected(value) {
             this.selected = value
+        },
+        handleClick(value) {
+            this.$router.push('/publicacao/' + value)      
         },
         getTotalSize() {
             var total = 0
@@ -158,7 +163,26 @@ export default {
         publicar() {
             var id = this.$route.params.id
             alert('publicação no id: ' + id)
+        },
+        getRating(lista){
+            var rating = 0
+            lista.forEach(elem => rating += elem.rating)
+            rating = rating / lista.length
+            if (lista.length==0) return 0
+            else return rating * 5 / 100
         }
+    },
+    created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/resource/"+this.$route.params.id,
+        })
+        .then(data => {
+            this.item = data.data;
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 
@@ -168,6 +192,8 @@ export default {
 
 
 <style>
+@import '../assets/rating.css';
+
 
 .recurso {
     text-align: center;
@@ -180,7 +206,11 @@ export default {
 }
 
 
-
+#recurso > .user {
+    text-align: left;
+    border-radius: 5px;
+    margin: 10px;
+}
 
 
 </style>
