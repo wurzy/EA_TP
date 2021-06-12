@@ -20,7 +20,48 @@ public class ResourceBean {
             for(int i = 0; i < us.length; i++){
                 Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+us[i].getIdResource(),null);
                 Files[] fs = FilesDAO.listFilesByQuery("idResource="+us[i],null);
-                s[i] = new ResourceJSON(us[i],rs,fs);
+                Posts[] ps = PostsDAO.listPostsByQuery("idResource="+us[i],null);
+                PostJSON[] pjs = new PostJSON[ps.length];
+                for(int j = 0 ; j < ps.length; j++){
+                    Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                    CommentJSON[] cjs = new CommentJSON[cs.length];
+                    for(int x = 0; x < cs.length; x++){
+                        cjs[x] = new CommentJSON(cs[x]);
+                    }
+                    pjs[j] = new PostJSON(ps[j],cjs);
+                }
+                s[i] = new ResourceJSON(us[i],rs,fs,pjs);
+            }
+            return s;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResourceJSON[] getResourcesOfType(String t) {
+        try{
+            ResourcesCriteria rc = new ResourcesCriteria();
+            ResourcetypesCriteria rt = rc.createIdResourceTypeCriteria();
+            rt.type.eq(t);
+
+            Resources[] us = rc.listResources();
+            ResourceJSON[] s = new ResourceJSON[us.length];
+            for(int i = 0; i < us.length; i++){
+                Posts[] ps = PostsDAO.listPostsByQuery("idResource="+us[i],null);
+                PostJSON[] pjs = new PostJSON[ps.length];
+                Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+us[i].getIdResource(),null);
+                Files[] fs = FilesDAO.listFilesByQuery("idResource="+us[i],null);
+                for(int j = 0 ; j < ps.length; j++){
+                    Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                    CommentJSON[] cjs = new CommentJSON[cs.length];
+                    for(int x = 0; x < cs.length; x++){
+                        cjs[x] = new CommentJSON(cs[x]);
+                    }
+                    pjs[j] = new PostJSON(ps[j],cjs);
+                }
+                s[i] = new ResourceJSON(us[i],rs,fs,pjs);
             }
             return s;
         }
@@ -36,7 +77,17 @@ public class ResourceBean {
             if(u!=null){
                 Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
                 Files[] fs = FilesDAO.listFilesByQuery("idResource="+id,null);
-                return new ResourceJSON(u,rs,fs);
+                Posts[] ps = PostsDAO.listPostsByQuery("idResource="+id,null);
+                PostJSON[] pjs = new PostJSON[ps.length];
+                for(int j = 0 ; j < ps.length; j++){
+                    Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                    CommentJSON[] cjs = new CommentJSON[cs.length];
+                    for(int x = 0; x < cs.length; x++){
+                        cjs[x] = new CommentJSON(cs[x]);
+                    }
+                    pjs[j] = new PostJSON(ps[j],cjs);
+                }
+                return new ResourceJSON(u,rs,fs,pjs);
             }
             else {
                 return null;
@@ -88,7 +139,17 @@ public class ResourceBean {
             ResourcesDAO.save(r);
             Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
             Files[] fs = FilesDAO.listFilesByQuery("idResource="+id,null);
-            return new ResourceJSON(r,rs,fs);
+            Posts[] ps = PostsDAO.listPostsByQuery("idResource="+id,null);
+            PostJSON[] pjs = new PostJSON[ps.length];
+            for(int j = 0 ; j < ps.length; j++){
+                Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                CommentJSON[] cjs = new CommentJSON[cs.length];
+                for(int x = 0; x < cs.length; x++){
+                    cjs[x] = new CommentJSON(cs[x]);
+                }
+                pjs[j] = new PostJSON(ps[j],cjs);
+            }
+            return new ResourceJSON(r,rs,fs,pjs);
         }
         catch(Exception e){
             e.printStackTrace();
@@ -103,6 +164,16 @@ public class ResourceBean {
             Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
             Updates[] us = UpdatesDAO.listUpdatesByQuery("idResource="+id,null);
             Files[] fs = FilesDAO.listFilesByQuery("idResource="+id,null);
+            Posts[] ps = PostsDAO.listPostsByQuery("idResource="+id,null);
+            PostJSON[] pjs = new PostJSON[ps.length];
+            for(int j = 0 ; j < ps.length; j++){
+                Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                CommentJSON[] cjs = new CommentJSON[cs.length];
+                for(int x = 0; x < cs.length; x++){
+                    cjs[x] = new CommentJSON(cs[x]);
+                }
+                pjs[j] = new PostJSON(ps[j],cjs);
+            }
             for (Ratings rr : rs){
                 RatingsDAO.delete(rr);
             }
@@ -113,7 +184,7 @@ public class ResourceBean {
                 FilesDAO.delete(rr);
             }
             ResourcesDAO.delete(r);
-            return new ResourceJSON(r,rs,fs);
+            return new ResourceJSON(r,rs,fs,pjs);
         }
         catch(Exception e){
             e.printStackTrace();

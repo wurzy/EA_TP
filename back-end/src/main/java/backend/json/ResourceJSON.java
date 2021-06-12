@@ -1,6 +1,7 @@
 package backend.json;
 
 import backend.dao.Files;
+import backend.dao.Posts;
 import backend.dao.Ratings;
 import backend.dao.Resources;
 
@@ -20,8 +21,9 @@ public class ResourceJSON {
     private UserJSON idUser;
     private RatingsJSON[] ratings;
     private FileJSON[] files;
+    private PostJSON[] posts;
 
-    public ResourceJSON(Resources r, Ratings[] rs, Files[] fs) {
+    public ResourceJSON(Resources r, Ratings[] rs, Files[] fs, PostJSON[] posts) {
         this.idUser = new UserJSON(r.getIdUser());
         this.idResource = r.getIdResource();
         this.title = r.getTitle();
@@ -41,6 +43,11 @@ public class ResourceJSON {
         for(int i = 0; i < fs.length; i++){
             this.files[i] = new FileJSON(fs[i]);
         }
+        this.posts = posts;
+    }
+
+    public PostJSON[] getPosts() {
+        return posts;
     }
 
     public UserJSON getIdUser() {

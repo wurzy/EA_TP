@@ -11,6 +11,7 @@ import javax.ejb.Local;
 public interface ResourceLocal {
     TypesJSON[] getResourceTypes();
     ResourceJSON[] getResources();
+    ResourceJSON[] getResourcesOfType(String t);
     ResourceJSON getResource(int id);
     RatingsJSON rateResource(int id, RateResourceJSON rrj);
     ResourceJSON incDownloads(int id);
