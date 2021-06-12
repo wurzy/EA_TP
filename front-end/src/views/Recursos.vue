@@ -1,7 +1,5 @@
 <template>
-  <div id="recursos" class="recursos" >
-
-    <h1>Recursos</h1>
+  <div id="recursos"  >
 
     <v-container>
         <v-row align="center" style="margin-top:40px">
@@ -22,13 +20,19 @@
                 show-select
                 v-model="selected"
                 :headers="headers"
-                :items="items"
+                :items="resources"
                 :items-per-page="8"
                 class="elevation-1"
                 @click:row="handleClick"
                 item-key="titulo">
-                    <template v-slot:[`item.id`]="{ value}" >
+                    <template v-slot:[`item.idResource`]="{ value}" >
                         <NewPub :value="value"/>
+                    </template>
+                    <template v-slot:[`item.ratings`]="{ value}" >
+                        {{getRating(value)}}
+                    </template>
+                    <template v-slot:[`item.lastModifiedAt`]="{ value}" >
+                        {{value.split("T")[0]}}
                     </template>
                 </v-data-table>
             </v-col>
@@ -44,6 +48,7 @@
 <script>
 import AddRec from '@/views/AdicionarRecurso.vue'
 import NewPub from '@/views/NovaPublicação.vue'
+import axios from 'axios'
 
 export default {
     name: 'recursos',
@@ -51,14 +56,15 @@ export default {
         return { 
             selected: [],
             filtro: '',
+            resources: [],
             headers: [
-                { text: 'Título', align: 'center', value: 'titulo'},
-                { text: 'Tipo', align: 'center',value: 'tipo' },
-                { text: 'Autor',align: 'center', value: 'autor' },
-                { text: 'Classificação',align: 'center', value: 'classificacao' },
-                { text: 'Nº de downloads',align: 'center', value: 'ndownloads' },
-                { text: 'Data de modificação',align: 'center', value: 'lastModificacao' },
-                { text: '',align: 'center', sortable: false, value: 'id' }
+                { text: 'Título', align: 'center', value: 'title'},
+                { text: 'Tipo', align: 'center',value: 'resourceType' },
+               // { text: 'Autor',align: 'center', value: 'autor' },
+                { text: 'Classificação',align: 'center', value: 'ratings' },
+                { text: 'Nº de downloads',align: 'center', value: 'nDownloads' },
+                { text: 'Data de modificação',align: 'center', value: 'lastModifiedAt' },
+                { text: '',align: 'center', sortable: false, value: 'idResource' }
             ],
             items: [
                 {titulo: 'Este é o titulo 1', tipo: 'type 1', autor: 'Joao', classificacao: '9.8', ndownloads: '4', lastModificacao: '2018-2-13', id: 'a'},
@@ -87,7 +93,25 @@ export default {
         },
         novaPublicacao(value) {
             console.log(value)
+        },
+        getRating(lista){
+            var rating = 0
+            lista.forEach(elem => rating += elem.rating)
+            console.log(rating / lista.length)
+            return rating / lista.length
         }
+    },
+    created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/resource/",
+        })
+        .then(data => {
+            this.resources = data.data;
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 
@@ -97,17 +121,6 @@ export default {
 
 
 <style>
-
-.recursos {
-    text-align: center;
-    background-color: gray;
-    height: 100vh;
-}
-
-.recursos h1{
-    margin-top:10px
-}
-
 
 #mytable table thead {
   background: #80dfff;

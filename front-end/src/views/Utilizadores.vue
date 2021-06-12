@@ -11,12 +11,11 @@
     <v-container style="max-width: 85%">
       <v-row no-gutters >
         <v-col v-for="n in list" :key="n.name" cols="12" sm="4">
-          <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idUser)">
+          <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idUser)" min-width="400px">
             <v-row>
               <v-col cols="12" sm="4">
                   <v-avatar size="100">
-                      <v-img v-if="n.picture" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
-                      <v-img v-else src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                      <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + n.picture"></v-img>
                   </v-avatar>
               </v-col>
               
@@ -32,8 +31,14 @@
       </v-row>
     </v-container>
 
-    <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
-    <v-btn v-else :style="{left: '50%', transform:'translateX(-50%)'}" @click="handleMore"> Ver mais</v-btn> 
+    <div v-if="list.length==0">
+        <h1 style="text-align:center"> Sem Resultados! </h1>
+    </div>
+
+    <div v-if="maiorQueLimite">
+        <v-btn v-if="all" :style="{left: '50%', transform:'translateX(-50%)'}" class="justify-center" @click="handleLess">Ver menos</v-btn> 
+        <v-btn v-else :style="{left: '50%', transform:'translateX(-50%)'}" @click="handleMore"> Ver mais</v-btn> 
+    </div>
 
   </div>
 </template>
@@ -54,7 +59,8 @@ export default {
             limite:9,
             list:[],
             users: [],
-            all: false
+            all: false,
+            maiorQueLimite: false
         }
     },
     components: {
@@ -68,6 +74,7 @@ export default {
         .then(data => {
             this.users = data.data;
             this.list = this.users.slice(0,this.limite);
+            this.users.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
         })
         .catch(err => {
             console.log(err)
@@ -97,10 +104,12 @@ export default {
         search() {
             if (this.filtro!=""){
                 this.filtrado = this.users.filter(this.filtrar)
+                this.filtrado.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
                 this.list = this.filtrado.slice(0,this.limite)
                 this.filtrou = true
             }
             else {
+                this.users.length > this.limite ? this.maiorQueLimite = true : this.maiorQueLimite = false
                 this.list = this.users.slice(0,this.limite) 
                 this.filtrou = false
             }
@@ -116,7 +125,7 @@ export default {
 
 <style>
 
-.user {
+#users > .user {
     text-align: left;
     border-radius: 5px;
     margin: 10px;
