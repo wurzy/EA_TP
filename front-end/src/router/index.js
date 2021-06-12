@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Utilizadores from '../views/Utilizadores.vue'
 import Recursos from '../views/Recursos.vue'
 import Recurso from '../views/Recurso.vue'
+import RecursosSearch from '../views/RecursosSearch.vue'
 import Publicacao from '../views/Publicacao.vue'
 import Home from '../views/Home.vue'
 import Perfil from '../views/Perfil.vue'
@@ -40,6 +41,11 @@ const routes = [
     path: '/publicacao/:id',
     name: 'Publicacao',
     component: Publicacao
+  },
+  {
+    path: '/recursos-search',
+    name: 'RecursosSearch',
+    component: RecursosSearch
   }
 ]
 
