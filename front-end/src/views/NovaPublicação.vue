@@ -60,7 +60,7 @@ export default {
         }
     },
     props: {
-        value: String
+        value: Number
     },
     methods: {
         cancelar() {
@@ -82,9 +82,10 @@ export default {
                 data: bodyFormData,
                 headers: { "Content-Type": "multipart/form-data" },
             })
-            .then(() => {
-                    alert('Submetido com sucesso no id: ' + this.value)
+            .then(data => {
+                    alert('Publicação efetuada com sucesso!')
                     this.cancelar();
+                    this.$router.push('/publicacao/' + data.data.idPost)
                 })
             .catch(err => {
                     console.log(err)
