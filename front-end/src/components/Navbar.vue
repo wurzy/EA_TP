@@ -2,11 +2,10 @@
   
   <div id="app">
   <v-app id="inspire">
-    <v-layout row justify-center>
+    <v-layout row justify-center class="navbar">
       <v-toolbar app color="#57a2bf" class="hidden-xs-and-down">
         <v-img
         class="logo"
-        lazy-src="../assets/redu.png"
         max-height="40"
         max-width="40"
         src="../assets/redu.png"
@@ -20,13 +19,13 @@
             <router-link class="hyperlink" to="/recursos">Recursos</router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Utilizadores</router-link>
+            <router-link class="hyperlink" to="/utilizadores">Utilizadores</router-link>
          </v-btn>
         </v-toolbar-items>
         <v-spacer></v-spacer>
         <v-toolbar-items>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Perfil</router-link>
+            <router-link class="hyperlink" to="/perfil">Perfil</router-link>
          </v-btn>
          <v-btn class="navbar-button">
             <router-link class="hyperlink" to="/">Logout</router-link>
@@ -86,6 +85,13 @@ export default {
 </script>
 
 <style>
+.navbar {
+    z-index: 10; 
+    width:100%; 
+    position: fixed;
+    margin-left: 0px !important;
+}
+
 .navbar-button {
     background-color: #57a2bf !important; 
     padding-top: 10px !important; 
