@@ -53,7 +53,7 @@ public class ResourceController {
         return ResponseEntity
                 .ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                .header("Content-Disposition", "attachment; filename=\" " + time + ".zip\"")
+                //.header("Content-Disposition", "attachment; filename=\" " + time + ".zip\"")
                 .body(out -> {
                     var zipOutputStream = new ZipOutputStream(out);
                     fsb.zipResources(ids,zipOutputStream);
