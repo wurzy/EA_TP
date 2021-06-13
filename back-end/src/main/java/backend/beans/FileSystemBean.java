@@ -2,20 +2,24 @@ package backend.beans;
 
 import backend.beans.locals.FileSystemLocal;
 import backend.dao.*;
+import backend.json.DownloadJSON;
 import org.apache.tika.Tika;
+import org.apache.tika.io.IOUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import java.io.File;
-import java.net.FileNameMap;
-import java.net.URLConnection;
+import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 
 @Stateless(name = "FileSystemEJB")
 @Local(FileSystemLocal.class)
@@ -23,6 +27,7 @@ import java.util.List;
 public class FileSystemBean {
     private final String imagesDirectory = System.getProperty("user.dir")+"/uploads/images";
     private final String resourceDirectory = System.getProperty("user.dir")+"/uploads/files";
+
 
     public backend.dao.Files[] saveFiles(MultipartFile[] files, Resources r) {
         try{
@@ -67,8 +72,71 @@ public class FileSystemBean {
         return null;
     }
 
+    public File getFile(int id){
+        try{
+            return new File(resourceDirectory + "/" + FilesDAO.getFilesByORMID(id).getPath());
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private File getFileByPath(String path){
+        try{
+            return new File(resourceDirectory + "/" + path);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private HashMap<String, File> getFilesFromResource(int id){
+        try{
+            HashMap<String,File> hm = new HashMap<>();
+            backend.dao.Files[] files = backend.dao.FilesDAO.listFilesByQuery("idResource="+id,null);
+            for(int i = 0; i < files.length; i++){
+                File f = getFileByPath(files[i].getPath());
+                hm.put(files[i].getName(), f);
+            }
+
+            return hm;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    private void zipResource(int id, ZipOutputStream zipOutputStream){
+        HashMap<String,File> hm = getFilesFromResource(id);
+        try{
+            Resources r = ResourcesDAO.getResourcesByORMID(id);
+            for (Map.Entry<String,File> file : hm.entrySet()) {
+                zipOutputStream.putNextEntry(new ZipEntry( r.getTitle()+"/"+ file.getKey()));
+                FileInputStream fileInputStream = new FileInputStream(file.getValue());
+
+                IOUtils.copy(fileInputStream, zipOutputStream);
+
+                fileInputStream.close();
+                zipOutputStream.closeEntry();
+            }
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public void zipResources(DownloadJSON idResources, ZipOutputStream zipOutputStream){
+        int[] ids = idResources.getIds();
+        for(int id: ids){
+            zipResource(id,zipOutputStream);
+        }
+    }
+
     public File getImage(String name){
-        return new File(imagesDirectory + "\\" + name);
+        return new File(imagesDirectory + "/" + name);
     }
 
 }

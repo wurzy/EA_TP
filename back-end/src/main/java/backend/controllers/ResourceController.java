@@ -7,11 +7,19 @@ import backend.dao.FilesDAO;
 import backend.dao.Ratings;
 import backend.dao.Resources;
 import backend.json.*;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.activation.FileTypeMap;
 import javax.ejb.EJB;
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 @CrossOrigin("*")
 @RestController
@@ -22,15 +30,38 @@ public class ResourceController {
     ResourceBean rb;
     @EJB
     FileSystemBean fsb;
-    // inserir, atualizar
+    // atualizar
     @GetMapping("/")
     public ResourceJSON[] getResources(){
         return rb.getResources();
     }
 
+    @GetMapping("/file/{id}")
+    public FileSystemResource getFile(@PathVariable int id){
+        File img = fsb.getFile(id);
+        return new FileSystemResource(img);
+    }
     @GetMapping("/type/{type}")
     public ResourceJSON[] getResourcesOfType(@PathVariable String type){
         return rb.getResourcesOfType(type);
+    }
+
+    @PostMapping(value = "/download/", produces = "application/zip")
+    public void downloadResources(HttpServletResponse response, @RequestBody DownloadJSON ids){
+        try{
+            response.setStatus(HttpServletResponse.SC_OK);
+            String time = Long.toString(System.currentTimeMillis());
+            response.addHeader("Content-Disposition", "attachment; filename=\" " + time + ".zip\"");
+            ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
+            fsb.zipResources(ids,zos);
+            for (int id : ids.getIds()) {
+                rb.incDownloads(id);
+            }
+            zos.close();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     @GetMapping("/{id}")
@@ -55,10 +86,10 @@ public class ResourceController {
         return new ResourceJSON(r,new Ratings[0], fs, new PostJSON[0]);
     }
 
-    @PostMapping("/inc_downloads/{id}")
-    public ResourceJSON incDownloads(@PathVariable int id){
-        return rb.incDownloads(id);
-    }
+    //@PostMapping("/inc_downloads/{id}")
+    //public ResourceJSON incDownloads(@PathVariable int id){
+    //    return rb.incDownloads(id);
+    //}
 
     @DeleteMapping("/{id}")
     public ResourceJSON deleteResource(@PathVariable int id){
