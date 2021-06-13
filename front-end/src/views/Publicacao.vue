@@ -35,7 +35,7 @@
                     </v-col>
                     <v-col cols="12" sm="10" style="border-radius: 5px; background-color: white;">
                         <span style="font-size: 20px; color: #ec6200;"> {{ n.idUser.name}} <br/> </span>
-                        <span> há {{ n.createdAt.split("T")[0] }} <br/> </span>
+                        <span> {{ n.createdAt | moment("from") }} <br/> </span>
                         <hr>
                         <span style="padding-top: 10px;"> {{ n.body }} </span>
                     </v-col>

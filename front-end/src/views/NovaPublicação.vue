@@ -72,7 +72,7 @@ export default {
         submeter() {
             var bodyFormData = new FormData();
             bodyFormData.append('idUser', 1);
-            bodyFormData.append('idResource', 0)
+            bodyFormData.append('idResource', this.value)
             bodyFormData.append('title',this.titulo)
             bodyFormData.append('body',this.descricao)
             bodyFormData.append('createdAt',new Date().toISOString().slice(0, 19).replace('T', ' '))

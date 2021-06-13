@@ -59,14 +59,36 @@
                         </v-col>
 
                         <v-col class="pa-2">
-                            <v-text-field 
-                            hide-details
-                            dense
-                            type="text" 
-                            v-model="data" 
-                            label="Data de criação"
-                            outlined
-                            ></v-text-field>
+                            <v-menu
+                              ref="menu"
+                              v-model="menu"
+                              :close-on-content-click="false"
+                              transition="scale-transition"
+                              offset-y
+                              min-width="auto"
+                            >
+                                <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field
+                                    v-model="data"
+                                    hide-details
+                                    dense
+                                    outlined
+                                    label="Data de criação"
+                                    readonly
+                                    v-bind="attrs"
+                                    v-on="on"
+                                   ></v-text-field>
+                                </template>
+
+                                <v-date-picker
+                                  ref="picker"
+                                  v-model="data"
+                                  color="#4F4E81"
+                                  :max="new Date().toISOString().substr(0, 10)"
+                                  min="1900-01-01"
+                                  @change="save"
+                                ></v-date-picker>
+                            </v-menu>
                         </v-col>
 
                         <div style="align:center; display:flex">
@@ -112,7 +134,8 @@
                                 </v-data-table>
                             </v-col>
                         </v-row>
-          
+                        
+                       
                         <v-col align="right">
                             <v-btn
                                 style="margin-right:24px"
@@ -136,8 +159,7 @@
                               @change="onFileChanged"
                             >
                         </v-col>
-
-
+                        
                         <v-col align="right">
                           <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
                           <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="margin-left:10px;height:40px" class="white--text" elevation="1" v-on:click="cancelar()" color="#527a7a">Cancelar</v-btn>
@@ -166,6 +188,7 @@ export default {
           titulo:'',
           descricao:'',
           data:null,
+          menu: false,
           tipo:'',
           files:[],
           headers: [
@@ -174,6 +197,11 @@ export default {
                 { text: 'Visualizar', align: 'center',sortable: false, value: 'url' },
                 { text: '', align: 'center', sortable: false, value: 'lastModified'}
             ],
+        }
+    },
+    watch: {
+        menu (val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
         }
     },
     methods: {
@@ -194,13 +222,25 @@ export default {
             this.tipo='',
             this.files=[]
         },
+        save(date) {
+            this.$refs.menu.save(date)
+        },
         submeter() {
             var bodyFormData = new FormData();
             bodyFormData.append('idUser', 1);
-            bodyFormData.append('idResource', 0)
-            bodyFormData.append('title',this.titulo)
-            bodyFormData.append('body',this.descricao)
-            bodyFormData.append('createdAt',new Date().toISOString().slice(0, 19).replace('T', ' '))
+            bodyFormData.append('title', this.titulo);
+            bodyFormData.append('description', this.descricao);
+            bodyFormData.append('registeredAt', this.data + " 00:00:00");
+            bodyFormData.append('visibility', this.visibilidade);
+            bodyFormData.append('type', this.tipo);
+
+            for (let i = 0; i < this.files.length; i++) {
+              const fil = this.files[i];
+              var size = this.getSize(fil.size) 
+              var file = new File(size, fil.name, {type:'application/json'});
+              bodyFormData.append('file', file, file.name);
+            }
+
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/resource/",
@@ -217,6 +257,13 @@ export default {
                     alert('Não foi possível adicionar novo recurso')
                     this.cancelar();
                 })
+        },
+        getSize(valor){
+            var res = []
+            for (let i = 0; i < valor; i++) {
+                res.push("1")
+            }
+            return res
         },
         remove(value) {
             var index = this.files.map(function(item) { return item.lastModified; }).indexOf(value);
@@ -236,6 +283,7 @@ export default {
                'type'             : f.type,
                'url'              : URL.createObjectURL(f) 
             }; 
+            console.log(newObject)
             this.files.push(newObject)
           })
         }
