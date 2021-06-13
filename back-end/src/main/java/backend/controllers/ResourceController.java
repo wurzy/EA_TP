@@ -7,6 +7,7 @@ import backend.dao.FilesDAO;
 import backend.dao.Ratings;
 import backend.dao.Resources;
 import backend.json.*;
+import org.apache.tika.Tika;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -48,11 +49,14 @@ public class ResourceController {
      */
 
     @RequestMapping(value="/file/{id}", method=RequestMethod.GET)
-    public ResponseEntity<byte[]> etFile(@PathVariable int id){
+    public ResponseEntity<byte[]> getFile(@PathVariable int id){
         HttpHeaders headers = new HttpHeaders();
         File img = fsb.getFile(id);
+        Tika tika = new Tika();
         headers.add("Content-Disposition", "inline; filename=" + img.getName());
         try{
+            String type = tika.detect(img);
+            headers.setContentType(MediaType.parseMediaType(type));
             ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(java.nio.file.Files.readAllBytes(img.toPath()), headers, HttpStatus.OK);
             return response;
         }
