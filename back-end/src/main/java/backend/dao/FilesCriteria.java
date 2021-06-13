@@ -21,6 +21,7 @@ public class FilesCriteria extends AbstractORMCriteria {
 	public final StringExpression name;
 	public final StringExpression mimetype;
 	public final StringExpression path;
+	public final LongExpression size;
 	public final IntegerExpression idResourceId;
 	public final AssociationExpression idResource;
 	
@@ -30,6 +31,7 @@ public class FilesCriteria extends AbstractORMCriteria {
 		name = new StringExpression("name", this);
 		mimetype = new StringExpression("mimetype", this);
 		path = new StringExpression("path", this);
+		size = new LongExpression("size",this);
 		idResourceId = new IntegerExpression("idResource.idResource", this);
 		idResource = new AssociationExpression("idResource", this);
 	}

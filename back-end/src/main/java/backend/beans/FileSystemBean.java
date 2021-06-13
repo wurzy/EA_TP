@@ -2,12 +2,14 @@ package backend.beans;
 
 import backend.beans.locals.FileSystemLocal;
 import backend.dao.*;
+import org.apache.tika.Tika;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import java.io.File;
+import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,28 +25,28 @@ public class FileSystemBean {
     private final String resourceDirectory = System.getProperty("user.dir")+"/uploads/files";
 
     public backend.dao.Files[] saveFiles(MultipartFile[] files, Resources r) {
-        //List<String> strings = new ArrayList<>();
         try{
             for (MultipartFile file : files) {
                 String[] arr = file.getOriginalFilename().split("[.]");
                 String time = Long.toString(System.currentTimeMillis());
                 String name = arr[0] + time + "." + arr[1];
                 Path fileNameAndPath = Paths.get(resourceDirectory, name);
-                String mimeType = URLConnection.guessContentTypeFromName(file.getOriginalFilename());
-                //strings.add(name);
+                Tika tika = new Tika();
+                String mimeType = tika.detect(file.getOriginalFilename());
+                long size = file.getSize();
                 Files.write(fileNameAndPath, file.getBytes());
                 backend.dao.Files f = new backend.dao.Files();
                 f.setName(file.getOriginalFilename());
                 f.setMimetype(mimeType);
                 f.setIdResource(r);
                 f.setPath(name);
+                f.setSize(size);
                 FilesDAO.save(f);
             }
             return FilesDAO.listFilesByQuery("idResource="+r.getIdResource(),null);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //return strings;
         return new backend.dao.Files[0];
     }
 

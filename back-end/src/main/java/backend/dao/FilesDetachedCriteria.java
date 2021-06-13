@@ -21,6 +21,7 @@ public class FilesDetachedCriteria extends AbstractORMDetachedCriteria {
 	public final StringExpression name;
 	public final StringExpression mimetype;
 	public final StringExpression path;
+	public final LongExpression size;
 	public final IntegerExpression idResourceId;
 	public final AssociationExpression idResource;
 	
@@ -30,6 +31,7 @@ public class FilesDetachedCriteria extends AbstractORMDetachedCriteria {
 		name = new StringExpression("name", this.getDetachedCriteria());
 		mimetype = new StringExpression("mimetype", this.getDetachedCriteria());
 		path = new StringExpression("path", this.getDetachedCriteria());
+		size = new LongExpression("size",this.getDetachedCriteria());
 		idResourceId = new IntegerExpression("idResource.idResource", this.getDetachedCriteria());
 		idResource = new AssociationExpression("idResource", this.getDetachedCriteria());
 	}
@@ -40,6 +42,7 @@ public class FilesDetachedCriteria extends AbstractORMDetachedCriteria {
 		name = new StringExpression("name", this.getDetachedCriteria());
 		mimetype = new StringExpression("mimetype", this.getDetachedCriteria());
 		path = new StringExpression("path", this.getDetachedCriteria());
+		size = new LongExpression("size", this.getDetachedCriteria());
 		idResourceId = new IntegerExpression("idResource.idResource", this.getDetachedCriteria());
 		idResource = new AssociationExpression("idResource", this.getDetachedCriteria());
 	}

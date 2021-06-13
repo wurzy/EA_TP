@@ -35,9 +35,19 @@ public class Files {
 	private String mimetype;
 	
 	private String path;
+
+	private long size;
 	
 	private Resources idResource;
-	
+
+	public long getSize() {
+		return size;
+	}
+
+	public void setSize(long size) {
+		this.size = size;
+	}
+
 	private void setIdFile(int value) {
 		this.idFile = value;
 	}

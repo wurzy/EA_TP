@@ -7,12 +7,18 @@ public class FileJSON {
     private String name;
     private String mimetype;
     private String path;
+    private long size;
 
     public FileJSON(Files f) {
         this.idFile = f.getIdFile();
         this.name = f.getName();
         this.mimetype = f.getMimetype();
         this.path = f.getPath();
+        this.size = f.getSize();
+    }
+
+    public long getSize() {
+        return size;
     }
 
     public int getIdFile() {

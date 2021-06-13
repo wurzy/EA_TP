@@ -13,6 +13,7 @@ License Type: Academic
 		<property name="name" column="name" type="string" length="50" not-null="true" lazy="false"/>
 		<property name="mimetype" column="mimetype" type="string" length="20" not-null="true" lazy="false"/>
 		<property name="path" column="path" type="string" length="60" not-null="true" lazy="false"/>
+		<property name="size" column="size" type="long" not-null="true" lazy="false"/>
 		<many-to-one name="idResource" cascade="lock" column="idResource" index="fk_Files_Resources1_idx" class="backend.dao.Resources" not-null="true" lazy="proxy" access="field">
 		</many-to-one>
 	</class>
