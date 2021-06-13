@@ -7,9 +7,9 @@
           max-height= '500px'
           >
           <v-card v-if="this.ficheiroAtual">
-            <v-img v-if="this.ficheiroAtual.type.split('/')[0]=='image'" :src="this.ficheiroAtual.url"></v-img>
-            <embed v-else-if="this.ficheiroAtual.type=='application/pdf'" :src="this.ficheiroAtual.url"/>
-            <v-card-title v-else>Não é possível visualizar o ficheiro! {{this.ficheiroAtual.type}}</v-card-title>
+            <v-img v-if="this.ficheiroAtual.mimetype.split('/')[0]=='image'" :src="url"></v-img>
+            <embed v-else-if="this.ficheiroAtual.mimetype=='application/pdf'" :src="this.ficheiroAtual.name"/>
+            <v-card-title v-else>Não é possível visualizar o ficheiro! {{this.ficheiroAtual.mimetype}}</v-card-title>
             </v-card>
         </v-dialog>
 
@@ -71,12 +71,12 @@
                                     class="elevation-1">
                                     <template v-slot:[`item.size`]="{ value }" >
                                             {{(value/1024).toFixed(1)}}KB
-                                        </template>
-                                        <template v-slot:[`item.url`]="{ value }" >
-                                            <span @click="hover = true; findImage(value)">
-                                                <v-icon>mdi-eye</v-icon>
-                                            </span>
-                                        </template>
+                                    </template>
+                                    <template v-slot:[`item.path`]="{ value }" >
+                                        <span @click="hover = true; findImage(value)">
+                                            <v-icon>mdi-eye</v-icon>
+                                        </span>
+                                    </template>
 
                                 </v-data-table>
                             </v-col>
@@ -85,7 +85,6 @@
                         <v-row class="pa-0 ma-0">
                             <v-col align="left" class="pa-8">
                                 <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="download()" color="#00ace6">Download</v-btn>
-                                <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="margin-left:10px;height:40px" class="white--text" elevation="1" v-on:click="publicar()" color="#527a7a">Publicar</v-btn>
                             </v-col>
                         </v-row>
                     </v-card>   
@@ -131,13 +130,14 @@ export default {
     data() {
         return { 
             ficheiroAtual: null,
+            url:'',
             hover: false,
             selected: "info",     
             item: '',
             headers: [
                 { text: 'Nome', sortable: false, value: 'name'},
                 { text: 'Tamanho', align: 'center',sortable: false, value: 'size' },
-                { text: 'Visualizar', align: 'center',sortable: false, value: 'url' }
+                { text: 'Visualizar', align: 'center',sortable: false, value: 'path' }
             ],  
         }
     },
@@ -158,11 +158,13 @@ export default {
             })
             return (total/1024).toFixed(1)
         },
-        findImage(url) {
+        findImage(path) {
             this.ficheiroAtual = null
             this.item.files.forEach(f => {
-                if (f.url==url) {
+                if (f.path==path) {
                     this.ficheiroAtual = f;
+                    this.url = URL.createObjectURL(f)
+                    console.log(this.url)
                 }
             })
         },
@@ -170,10 +172,6 @@ export default {
             this.item.files.forEach(f => {
                 console.log(f)
             })
-        },
-        publicar() {
-            var id = this.$route.params.id
-            alert('publicação no id: ' + id)
         },
         getRating(lista){
             var rating = 0
