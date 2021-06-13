@@ -5,7 +5,7 @@
             <br/>
             <v-col v-for="n in ordered" :key="n.idRecurso" cols="12" sm="12">
                 <span class="letter" v-if="n.length == 1"> {{ n.toUpperCase() }} <hr> </span>
-                <li v-else @click="handleClick(n)"> {{ n }} </li>
+                <li style="cursor: pointer;" v-else @click="handleClick(n)"> {{ n }} </li>
             </v-col>
         </v-container>
     </div>

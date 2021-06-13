@@ -1,7 +1,6 @@
 <template>
   
-  <div id="app">
-  <v-app id="inspire">
+  <div id="navbar-max">
     <v-layout row justify-center class="navbar">
       <v-toolbar color="#57a2bf" class="hidden-xs-and-down">
         <v-img
@@ -13,27 +12,26 @@
 
         <v-toolbar-items>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Home</router-link>
+            <router-link class="hyperlink" to="/"><b>Home</b></router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/recursos">Recursos</router-link>
+            <router-link class="hyperlink" to="/recursos"><b>Recursos</b></router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/utilizadores">Utilizadores</router-link>
+            <router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>
          </v-btn>
         </v-toolbar-items>
         <v-spacer></v-spacer>
         <v-toolbar-items>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/perfil">Perfil</router-link>
+            <router-link class="hyperlink" to="/perfil"><b>Perfil</b></router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/">Logout</router-link>
+            <router-link class="hyperlink" to="/"><b>Logout</b></router-link>
          </v-btn>
         </v-toolbar-items>
         </v-toolbar>
     </v-layout>
-  </v-app>
   </div>
 
 </template>
@@ -85,6 +83,11 @@ export default {
 </script>
 
 <style>
+
+#navbar-max {
+    margin-bottom: 70px;
+}
+
 .navbar {
     z-index: 10; 
     width:100%; 
