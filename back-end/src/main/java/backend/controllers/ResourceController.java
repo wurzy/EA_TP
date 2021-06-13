@@ -8,6 +8,8 @@ import backend.dao.Ratings;
 import backend.dao.Resources;
 import backend.json.*;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,11 +39,29 @@ public class ResourceController {
         return rb.getResources();
     }
 
+    /*
     @GetMapping("/file/{id}")
     public FileSystemResource getFile(@PathVariable int id){
         File img = fsb.getFile(id);
         return new FileSystemResource(img);
     }
+     */
+
+    @RequestMapping(value="/file/{id}", method=RequestMethod.GET)
+    public ResponseEntity<byte[]> etFile(@PathVariable int id){
+        HttpHeaders headers = new HttpHeaders();
+        File img = fsb.getFile(id);
+        headers.add("Content-Disposition", "inline; filename=" + img.getName());
+        try{
+            ResponseEntity<byte[]> response = new ResponseEntity<byte[]>(java.nio.file.Files.readAllBytes(img.toPath()), headers, HttpStatus.OK);
+            return response;
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @GetMapping("/type/{type}")
     public ResourceJSON[] getResourcesOfType(@PathVariable String type){
         return rb.getResourcesOfType(type);
