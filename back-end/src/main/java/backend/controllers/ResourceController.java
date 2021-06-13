@@ -47,13 +47,13 @@ public class ResourceController {
         return rb.getResourcesOfType(type);
     }
 
-    @PostMapping(value = "/download/", produces = "application/zip")
+    @PostMapping( "/download/")
     public ResponseEntity<StreamingResponseBody> downloadResources(@RequestBody DownloadJSON ids){
         String time = Long.toString(System.currentTimeMillis());
         return ResponseEntity
                 .ok()
+                .header("Content-Disposition", "attachment; filename=\"" + time + ".zip\"")
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
-                //.header("Content-Disposition", "attachment; filename=\" " + time + ".zip\"")
                 .body(out -> {
                     var zipOutputStream = new ZipOutputStream(out);
                     fsb.zipResources(ids,zipOutputStream);
