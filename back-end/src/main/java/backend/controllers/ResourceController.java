@@ -1,13 +1,17 @@
 package backend.controllers;
 
+import backend.beans.FileSystemBean;
 import backend.beans.ResourceBean;
-import backend.json.RateResourceJSON;
-import backend.json.RatingsJSON;
-import backend.json.ResourceJSON;
-import backend.json.TypesJSON;
+import backend.dao.Files;
+import backend.dao.FilesDAO;
+import backend.dao.Ratings;
+import backend.dao.Resources;
+import backend.json.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.ejb.EJB;
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -16,6 +20,8 @@ public class ResourceController {
 
     @EJB
     ResourceBean rb;
+    @EJB
+    FileSystemBean fsb;
     // inserir, atualizar
     @GetMapping("/")
     public ResourceJSON[] getResources(){
@@ -42,12 +48,12 @@ public class ResourceController {
         return rb.rateResource(id,rrj);
     }
 
-    /*
     @PostMapping("/")
-    public ResourceJSON upload(){
-        return rb.incDownloads(id);
+    public ResourceJSON upload(@RequestParam String title, @RequestParam String description, @RequestParam java.sql.Timestamp registeredAt, @RequestParam boolean visibility, @RequestParam int idUser, @RequestParam String type, @RequestParam("file") MultipartFile[] files){
+        Resources r = rb.createResource(new CreateResourceJSON(title,description,registeredAt,visibility,idUser,type));
+        Files[] fs = fsb.saveFiles(files,r);
+        return new ResourceJSON(r,new Ratings[0], fs, new PostJSON[0]);
     }
-    */
 
     @PostMapping("/inc_downloads/{id}")
     public ResourceJSON incDownloads(@PathVariable int id){

@@ -7,11 +7,40 @@ import org.springframework.stereotype.Component;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.time.Instant;
 
 @Stateless(name = "PostBeanEJB")
 @Local(ResourceLocal.class)
 @Component
 public class ResourceBean {
+
+    public Resources createResource(CreateResourceJSON crj){
+        try{
+           Resources r = new Resources();
+           r.setTitle(crj.getTitle());
+           r.setDescription(crj.getDescription());
+           r.setCreatedAt(java.sql.Timestamp.from(Instant.now()));
+           r.setRegisteredAt(crj.getRegisteredAt());
+           r.setLastModifiedAt(java.sql.Timestamp.from(Instant.now()));
+           r.setVisibility(crj.getVisibility());
+           r.setnDownloads(0);
+           r.setAvailable(true);
+           r.setIdUser(UsersDAO.getUsersByORMID(crj.getIdUser()));
+           Resourcetypes rt = ResourcetypesDAO.loadResourcetypesByQuery("type='"+crj.getType()+"'",null);
+           if(rt==null){
+               rt = new Resourcetypes();
+               rt.setType(crj.getType());
+               ResourcetypesDAO.save(rt);
+           }
+           r.setIdResourceType(rt);
+           ResourcesDAO.save(r);
+           return r;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public ResourceJSON[] getResources() {
         try{

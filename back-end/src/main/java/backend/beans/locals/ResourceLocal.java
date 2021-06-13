@@ -1,14 +1,13 @@
 package backend.beans.locals;
 
-import backend.json.RateResourceJSON;
-import backend.json.RatingsJSON;
-import backend.json.ResourceJSON;
-import backend.json.TypesJSON;
+import backend.dao.Resources;
+import backend.json.*;
 
 import javax.ejb.Local;
 
 @Local
 public interface ResourceLocal {
+    Resources createResource(CreateResourceJSON crj);
     TypesJSON[] getResourceTypes();
     ResourceJSON[] getResources();
     ResourceJSON[] getResourcesOfType(String t);
