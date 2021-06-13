@@ -12,6 +12,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import javax.activation.FileTypeMap;
 import javax.ejb.EJB;
@@ -47,21 +48,20 @@ public class ResourceController {
     }
 
     @PostMapping(value = "/download/", produces = "application/zip")
-    public void downloadResources(HttpServletResponse response, @RequestBody DownloadJSON ids){
-        try{
-            response.setStatus(HttpServletResponse.SC_OK);
-            String time = Long.toString(System.currentTimeMillis());
-            response.addHeader("Content-Disposition", "attachment; filename=\" " + time + ".zip\"");
-            ZipOutputStream zos = new ZipOutputStream(response.getOutputStream());
-            fsb.zipResources(ids,zos);
-            for (int id : ids.getIds()) {
-                rb.incDownloads(id);
-            }
-            zos.close();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
+    public ResponseEntity<StreamingResponseBody> downloadResources(@RequestBody DownloadJSON ids){
+        String time = Long.toString(System.currentTimeMillis());
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=\" " + time + ".zip\"")
+                .body(out -> {
+                    var zipOutputStream = new ZipOutputStream(out);
+                    fsb.zipResources(ids,zipOutputStream);
+                    for (int id : ids.getIds()) {
+                        rb.incDownloads(id);
+                    }
+                    zipOutputStream.close();
+                });
     }
 
     @GetMapping("/{id}")
