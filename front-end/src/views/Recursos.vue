@@ -2,7 +2,7 @@
   <div id="recursos"  >
 
     <v-container>
-        <v-row align="center" style="margin-top:40px">
+        <v-row align="center" style="margin-top:-10px">
             <AddRec/>
             <v-col cols=2>
                 <v-text-field @keydown.enter="search()" label="Filtro" v-model="filtro"></v-text-field>
@@ -21,7 +21,7 @@
                 v-model="selected"
                 :headers="headers"
                 :items="resources"
-                :items-per-page="5"
+                :items-per-page="10"
                 class="elevation-1 click"
                 :value="null"
                 @click:row="handleClick"
@@ -53,7 +53,7 @@
 import AddRec from '@/views/AdicionarRecurso.vue'
 import NewPub from '@/views/NovaPublicação.vue'
 import axios from 'axios'
-
+import FileDownload from 'js-file-download';
 
 
 export default {
@@ -84,10 +84,31 @@ export default {
           this.$router.push('/recursos/' + value.idResource)      
         },
         download() {
+            if (this.selected.length>0) {
+            var ids = []
             this.selected.forEach(elem => {
-                console.log(elem)
+                ids.push(elem.idResource)
             })
-            //this.$router.go()
+            var json = {}
+            json['ids'] = ids
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/resource/download/",
+                data: json,
+                responseType: 'blob',
+            })
+            .then(response => {
+                let fileName = Date.now() + ".zip"
+                FileDownload(response.data, fileName)
+            })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível realizar o download')
+                })
+            }
+            else {
+                alert('Não selecionou nenhum recurso!')
+            }
         },
         getRating(lista){
             var rating = 0

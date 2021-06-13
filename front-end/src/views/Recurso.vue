@@ -7,10 +7,12 @@
           max-height= '500px'
           >
           <v-card v-if="this.ficheiroAtual">
-            <v-img v-if="this.ficheiroAtual.mimetype.split('/')[0]=='image'" :src="url"></v-img>
-            <embed v-else-if="this.ficheiroAtual.mimetype=='application/pdf'" :src="this.ficheiroAtual.name"/>
+            <v-img v-if="this.ficheiroAtual.type.split('/')[0]=='image'" :src="url"></v-img>
+            <embed v-else-if="this.ficheiroAtual.type=='application/pdf'" :src="url"/>
+            <embed v-else-if="this.ficheiroAtual.type=='text/plain'" :src="url"/>
+            <embed v-else-if="this.ficheiroAtual.type=='application/javascript'" :src="url"/>
             <v-card-title v-else>Não é possível visualizar o ficheiro! {{this.ficheiroAtual.mimetype}}</v-card-title>
-            </v-card>
+          </v-card>
         </v-dialog>
 
         <v-container v-if="item">
@@ -72,8 +74,8 @@
                                     <template v-slot:[`item.size`]="{ value }" >
                                             {{(value/1024).toFixed(1)}}KB
                                     </template>
-                                    <template v-slot:[`item.path`]="{ value }" >
-                                        <span @click="hover = true; findImage(value)">
+                                    <template v-slot:[`item.idFile`]="{ value }" >
+                                        <span @click="hover = true; getFile(value)">
                                             <v-icon>mdi-eye</v-icon>
                                         </span>
                                     </template>
@@ -93,7 +95,10 @@
 
 
             <v-row style="margin-top:40px">
-                <v-col align="right">
+                <v-col cols="10" align="right">
+                <NewRate :value="item.idResource"/>
+                </v-col>
+                <v-col >
                     <NewPub :value="item.idResource"/>
                 </v-col>
             </v-row>
@@ -124,6 +129,8 @@
 <script>
 import axios from 'axios'
 import NewPub from '@/views/NovaPublicação.vue'
+import NewRate from '@/views/Classificar.vue'
+import FileDownload from 'js-file-download';
 
 export default {
     name: 'Recurso',
@@ -137,12 +144,13 @@ export default {
             headers: [
                 { text: 'Nome', sortable: false, value: 'name'},
                 { text: 'Tamanho', align: 'center',sortable: false, value: 'size' },
-                { text: 'Visualizar', align: 'center',sortable: false, value: 'path' }
+                { text: 'Visualizar', align: 'center',sortable: false, value: 'idFile' }
             ],  
         }
     },
     components: {
-        NewPub
+        NewPub,
+        NewRate
     },
     methods: {
         updateSelected(value) {
@@ -158,20 +166,39 @@ export default {
             })
             return (total/1024).toFixed(1)
         },
-        findImage(path) {
-            this.ficheiroAtual = null
-            this.item.files.forEach(f => {
-                if (f.path==path) {
-                    this.ficheiroAtual = f;
-                    this.url = URL.createObjectURL(f)
-                    console.log(this.url)
-                }
-            })
+        getFile(id) {
+            axios({
+                method: "get",
+                url: "http://localhost:8081/api/resource/file/"+id,
+                responseType: 'blob',
+                })
+                .then(data => {
+                    this.ficheiroAtual = data.data
+                    this.url = URL.createObjectURL(data.data)
+                })
+                .catch(err => {
+                    console.log(err)
+                })
         },
         download() {
-            this.item.files.forEach(f => {
-                console.log(f)
+            var json = {
+                ids:[this.$route.params.id]
+            }
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/resource/download/",
+                data: json,
+                responseType: 'blob',
             })
+            .then(response => {
+                let fileName = Date.now() + ".zip"
+                FileDownload(response.data, fileName)
+            })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível realizar o download')
+                })
+            
         },
         getRating(lista){
             var rating = 0

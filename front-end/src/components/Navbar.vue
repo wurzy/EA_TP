@@ -15,7 +15,7 @@
             <router-link class="hyperlink" to="/"><b>Home</b></router-link>
          </v-btn>
          <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/recursos"><b>Recursos</b></router-link>
+            <router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>
          </v-btn>
          <v-btn class="navbar-button">
             <router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>

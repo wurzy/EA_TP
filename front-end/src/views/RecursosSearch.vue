@@ -3,6 +3,9 @@
         <v-container style="padding: 40px 10% 0px">
             <h1 class="title">Tipo de Recursos</h1>
             <br/>
+            <v-col align="center">
+                <a style="color:black;" href="http://localhost:8080/recursos/">Ver Todos</a>
+            </v-col>
             <v-col v-for="n in ordered" :key="n.idRecurso" cols="12" sm="12">
                 <span class="letter" v-if="n.length == 1"> {{ n.toUpperCase() }} <hr> </span>
                 <li style="cursor: pointer;" v-else @click="handleClick(n)"> {{ n }} </li>
@@ -73,5 +76,7 @@ export default {
     text-decoration-thickness: 6px;
     text-decoration-color: #e88b00;
 }
+
+
 
 </style>

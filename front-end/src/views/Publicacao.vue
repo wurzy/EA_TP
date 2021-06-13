@@ -9,7 +9,10 @@
                 </v-col>
                 <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;" >
                     <span style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
-                    <span > <b>Recurso: </b> {{ pub.resource.title }} <br/> </span>
+                    <span> 
+                        <b>Recurso: </b> 
+                        <span style="cursor:pointer;" @click="handleClickResource(pub.resource.id)">{{ pub.resource.title }} <br/> </span>
+                    </span>
                     <span> {{ pub.user.name }} há {{ pub.createdAt.split("T")[0] }} </span>
                 </v-col>
             </v-row>
@@ -62,6 +65,9 @@ export default {
         }
     },
     methods: {
+        handleClickResource(id) {
+            this.$router.push('/recursos/'+id)
+        },
         addComment() {
             var json = {};
             json['idUser'] = 1
