@@ -145,7 +145,7 @@ public class ResourceBean {
 
     public RatingsJSON rateResource(int id, RateResourceJSON rrj){
         try{
-            Ratings r = RatingsDAO.loadRatingsByQuery("idUser=" + rrj.getIdUser(),null);
+            Ratings r = RatingsDAO.loadRatingsByQuery("idUser=" + rrj.getIdUser() + " and idResource="+id,null);
             if(r==null){
                 r = new Ratings();
                 r.setIdResource(ResourcesDAO.getResourcesByORMID(id));
