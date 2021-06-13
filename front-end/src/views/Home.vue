@@ -8,7 +8,7 @@
           <h1>Publicações</h1>
           <v-container class="pubs">
             <v-row no-gutters>
-              <v-col v-for="n in list" :key="n" cols="12" sm="6">
+              <v-col v-for="n in list" :key="n.idPub" cols="12" sm="6">
                 <v-card class="pa-6 pub" outlined  @click="handleClick(n.idPub)">
                   <v-row>
                     <v-col cols="12" sm="4" style="display:inline-flex">
@@ -33,7 +33,7 @@
             <h1>Novos Recursos</h1>
             <v-container class="recs">
             <v-row no-gutters>
-              <v-col v-for="n in recs" :key="n" cols="12" sm="12">
+              <v-col v-for="n in recs" :key="n.idRec" cols="12" sm="12">
                 <v-card class="pa-6 rec" @click="handleClick2(n.idRec)">
                   <v-row>
                     <v-col cols="12" sm="4" style="display:inline-flex">

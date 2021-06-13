@@ -1,21 +1,20 @@
 <template>
     <div id="publicacao" class="publicacao" >
 
-        <v-container style="padding: 40px 80px 0px 80px;">
+        <v-container v-if="pub" style="padding: 40px 80px 0px 80px;">
 
-            <v-row>
+            <v-row >
                 <v-col cols="12" sm="2" style="justify-items: center; display: flex; flex-direction: column; justify-content: center;">
-                    <img v-if="pub.imagemURL" class="img_perfil" :src="require('../' + pub.imagemURL.substr(3))"/>
-                    <img v-else class="img_perfil" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"/>
+                    <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + pub.user.picture"></v-img>
                 </v-col>
-                <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;">
-                    <span style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.titulo }}</b> <br/> </span>
-                    <span> <b>Recurso: </b>{{ pub.recurso }} <br/> </span>
-                    <span> {{ pub.autor }} há {{ pub.dataPublicacao }} </span>
+                <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;" >
+                    <span style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
+                    <span > <b>Recurso: </b> {{ pub.resource.title }} <br/> </span>
+                    <span> {{ pub.user.name }} há {{ pub.createdAt.split("T")[0] }} </span>
                 </v-col>
             </v-row>
             <v-row class="corpo">
-                <span> {{ pub.conteudo }} </span>
+                <span> {{ pub.body }} </span>
             </v-row>
         <br/>
         <hr style="border-top: 2px solid #b1b1b1;">
@@ -29,17 +28,16 @@
             <br/>
 
             <v-row no-gutters style="width: 95%;">
-              <v-col v-for="n in coms" :key="n" cols="12" sm="12">
+              <v-col v-for="n in pub.comments" :key="n.idComment" cols="12" sm="12">
                   <v-row style="padding-top: 60px;">
                     <v-col cols="12" sm="2" style="display:inline-flex">
-                        <img v-if="n.imagemURL" class="img" style="border-radius: 50px;" :src="require('../' + n.imagemURL.substr(3))"/>
-                        <img v-else class="img" style="border-radius: 50px;" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"/>
+                        <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + n.idUser.picture"></v-img>
                     </v-col>
                     <v-col cols="12" sm="10" style="border-radius: 5px; background-color: white;">
-                        <span style="font-size: 20px; color: #ec6200;"> {{ n.autor}} <br/> </span>
-                        <span> há {{ n.dataComentario }} <br/> </span>
+                        <span style="font-size: 20px; color: #ec6200;"> {{ n.idUser.name}} <br/> </span>
+                        <span> há {{ n.createdAt.split("T")[0] }} <br/> </span>
                         <hr>
-                        <span style="padding-top: 10px;"> {{ n.conteudo }} </span>
+                        <span style="padding-top: 10px;"> {{ n.body }} </span>
                     </v-col>
                   </v-row>
               </v-col>
@@ -53,32 +51,48 @@
 
 
 <script>
+import axios from 'axios'
 
 export default {
     name: 'Publicacao',
     data() {
         return { 
             com:"",
-            pub: {
-                imagemURL: false, 
-                titulo: 'Título da Publicação', 
-                recurso: 'Recurso', 
-                autor: 'João', 
-                conteudo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                dataPublicacao: '2012-3-3', 
-                idPub: 1
-            },
-            coms: [
-                {imagemURL: false, autor: 'João',  dataComentario: '2012-3-3', conteudo: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempo!', idComentario: 1},
-                {imagemURL: false, autor: 'Pedro', dataComentario: '2012-3-4', conteudo: 'Lorem ipsum dolor sit amet...', idComentario: 2},
-                {imagemURL: false, autor: 'José', dataComentario: '2012-3-4', conteudo: 'Lorem ipsum dolor sit amet... Tempo.', idComentario: 3}
-            ]
+            pub: ''
         }
     },
     methods: {
-        addComment() {  
-            console.log(this.com)
-        },
+        addComment() {
+            var json = {};
+            json['idUser'] = 1
+            json['body'] = this.com
+            json['createdAt'] = new Date().toISOString()
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/comment/" + this.$route.params.id,
+                data: json
+            })
+            .then(() => {
+                    alert('Comentário efetuado com sucesso!')
+                    this.$router.go()
+                })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível adicionar novo comentário')
+                })
+        }
+    },
+    created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/post/"+this.$route.params.id,
+        })
+        .then(data => {
+            this.pub = data.data;
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 

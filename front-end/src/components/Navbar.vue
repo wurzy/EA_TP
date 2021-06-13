@@ -3,7 +3,7 @@
   <div id="app">
   <v-app id="inspire">
     <v-layout row justify-center class="navbar">
-      <v-toolbar app color="#57a2bf" class="hidden-xs-and-down">
+      <v-toolbar color="#57a2bf" class="hidden-xs-and-down">
         <v-img
         class="logo"
         max-height="40"
