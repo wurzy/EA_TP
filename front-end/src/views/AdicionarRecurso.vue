@@ -13,10 +13,11 @@
                       max-height= '500px'
                       >
                       <v-card v-if="this.ficheiroAtual">
-                        <v-img v-if="this.ficheiroAtual.type.split('/')[0]=='image'" :src="this.ficheiroAtual.url"></v-img>
-                        <embed v-else-if="this.ficheiroAtual.type=='application/pdf'" :src="this.ficheiroAtual.url"/>
-                        <v-card-title v-else>Não é possível visualizar o ficheiro! {{this.ficheiroAtual.type}}</v-card-title>
-                        </v-card>
+                         <v-img v-if="this.ficheiroAtual.type.split('/')[0]=='image'" :src="url"></v-img>
+                         <embed v-else-if="this.ficheiroAtual.type=='application/pdf'" :src="url"/>
+                         <embed v-else-if="this.ficheiroAtual.type.split('/')[0]=='text'" :src="url"/>
+                         <v-card-title v-else>Não é possível visualizar o ficheiro! {{this.ficheiroAtual.mimetype}}</v-card-title>
+                       </v-card>
                     </v-dialog>
                     
                     <v-container>
@@ -94,9 +95,13 @@
                         <div style="align:center; display:flex">
                             <span style="padding: 18px 0 0 10px"> Visibilidade: </span>
                             <v-switch
-                             style="margin-left:10px"
+                             style="margin-left:10px;"
                              v-model="visibilidade"
                             ></v-switch>
+                            <div style="margin-top:18px;margin-left:10px">
+                                <span v-if="visibilidade"> (Público) </span>
+                                <span v-else> (Privado) </span>
+                            </div>
                         </div>
 
                         <v-row >
@@ -110,7 +115,7 @@
                                 :items="files"
                                 item-key="name"
                                 class="elevation-1">
-                                <template v-slot:[`item.lastModified`]="{ value }" >
+                                <template v-slot:[`item.file.lastModified`]="{ value }" >
                                     <v-btn
                                       @click="remove(value)"
                                       color="red"
@@ -122,12 +127,11 @@
                                     X 
                                     </v-btn>
                                 </template>
-                                <template v-slot:[`item.size`]="{ value }" >
+                                <template v-slot:[`item.file.size`]="{ value }" >
                                     {{(value/1024).toFixed(1)}}KB
                                 </template>
                                 <template v-slot:[`item.url`]="{ value }" >
-                                   <!-- <span @mouseover="hover = true; url = value" @mouseleave="hover = false" > -->
-                                    <span @click="hover = true; findImage(value)">
+                                    <span @click="hover = true; getFile(value)">
                                         <v-icon>mdi-eye</v-icon>
                                     </span>
                                 </template>
@@ -135,33 +139,17 @@
                             </v-col>
                         </v-row>
                         
-                       
-                        <v-col align="right">
-                            <v-btn
-                                style="margin-right:24px"
-                                @click="chooseFiles()"
-                                color="green"
-                                outlined
-                                small
-                                elevation="8"
-                                icon
-                                >
-                                <v-icon small>
-                                    mdi-plus
-                                </v-icon> 
-                            </v-btn>
-                            <input
-                              ref="uploader"
-                              class="d-none"
-                              type="file"
+                        <v-col cols="1" offset="11">
+                            <v-file-input
+                              v-model="filesInput"
+                              hide-input
+                              prepend-icon="mdi-plus"
                               multiple
-                              accept="/*"
-                              @change="onFileChanged"
-                            >
+                            ></v-file-input>
                         </v-col>
                         
                         <v-col align="right">
-                          <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
+                          <v-btn :loading="loading" v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
                           <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="margin-left:10px;height:40px" class="white--text" elevation="1" v-on:click="cancelar()" color="#527a7a">Cancelar</v-btn>
                         </v-col>
 
@@ -182,6 +170,7 @@ export default {
         return{
           ficheiroAtual: null,
           url:'',
+          urls:[],
           hover: false,
           show:false,
           visibilidade:true,
@@ -189,27 +178,38 @@ export default {
           descricao:'',
           data:null,
           menu: false,
+          loading:false,
           tipo:'',
+          filesInput:[],
           files:[],
           headers: [
-                { text: 'Nome', align: 'center',sortable: false, value: 'name'},
-                { text: 'Tamanho', align: 'center',sortable: false, value: 'size' },
+                { text: 'Nome', align: 'center',sortable: false, value: 'file.name'},
+                { text: 'Tamanho', align: 'center',sortable: false, value: 'file.size' },
                 { text: 'Visualizar', align: 'center',sortable: false, value: 'url' },
-                { text: '', align: 'center', sortable: false, value: 'lastModified'}
+                { text: '', align: 'center', sortable: false, value: 'file.lastModified'}
             ],
         }
     },
     watch: {
         menu (val) {
             val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+        },
+        'filesInput' : function() {
+            this.filesInput.forEach(file => {
+                var url = URL.createObjectURL(file)
+                var json = {}
+                json['url'] = url
+                json['file'] = file
+                this.files.push(json)
+            })
         }
     },
     methods: {
-        findImage(url) {
-            this.ficheiroAtual = null
-            this.files.forEach(f => {
-                if (f.url==url) {
-                    this.ficheiroAtual = f;
+        getFile(url) {            
+            this.files.forEach(json => {
+                if (json.url==url) {
+                    this.url = url
+                    this.ficheiroAtual = json.file;
                 }
             })
         },
@@ -220,12 +220,16 @@ export default {
             this.descricao='',
             this.data=null,
             this.tipo='',
-            this.files=[]
+            this.files=[],
+            this.filesInput=[],
+            this.urls=[],
+            this.loading=false
         },
         save(date) {
             this.$refs.menu.save(date)
         },
         submeter() {
+            this.loading=true
             var bodyFormData = new FormData();
             bodyFormData.append('idUser', 1);
             bodyFormData.append('title', this.titulo);
@@ -235,9 +239,7 @@ export default {
             bodyFormData.append('type', this.tipo);
 
             for (let i = 0; i < this.files.length; i++) {
-              const fil = this.files[i];
-              var size = this.getSize(fil.size) 
-              var file = new File(size, fil.name, {type:'application/json'});
+              const file = this.files[i].file;
               bodyFormData.append('file', file, file.name);
             }
 
@@ -258,34 +260,9 @@ export default {
                     this.cancelar();
                 })
         },
-        getSize(valor){
-            var res = []
-            for (let i = 0; i < valor; i++) {
-                res.push("1")
-            }
-            return res
-        },
         remove(value) {
-            var index = this.files.map(function(item) { return item.lastModified; }).indexOf(value);
+            var index = this.files.map(function(item) { return item.file.lastModified; }).indexOf(value);
             this.files.splice(index, 1);
-        },
-        chooseFiles() {
-          this.$refs.uploader.click()
-        },
-        onFileChanged(e) { 
-          let file = e.target.files;
-          file.forEach( f => {
-            var newObject  = {
-               'lastModified'     : f.lastModified,
-               'lastModifiedDate' : f.lastModifiedDate,
-               'name'             : f.name,
-               'size'             : f.size,
-               'type'             : f.type,
-               'url'              : URL.createObjectURL(f) 
-            }; 
-            console.log(newObject)
-            this.files.push(newObject)
-          })
         }
     }
 }
@@ -308,6 +285,11 @@ embed{
   height: 500px;
   width: 500px;    
 }
+
+#app > div.v-dialog__content.v-dialog__content--active > div > div > div > div.container > div.col.col-1.offset-11 > div > div.v-input__prepend-outer > div > button {
+    color:green
+}
+
 
 
 
