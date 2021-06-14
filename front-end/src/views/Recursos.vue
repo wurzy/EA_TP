@@ -22,6 +22,7 @@
                 :headers="headers"
                 :items="resources"
                 :items-per-page="10"
+                :loading="loading"
                 class="elevation-1 click"
                 :value="null"
                 @click:row="handleClick"
@@ -64,6 +65,7 @@ export default {
             filtro: '',
             resources: [],
             resourcesInitial: [],
+            loading: false,
             headers: [
                 { text: 'Título', align: 'center', value: 'title'},
                 { text: 'Tipo', align: 'center',value: 'resourceType' },
@@ -132,6 +134,7 @@ export default {
          }
     },
     created() {
+        this.loading=true
         axios({
             method: "get",
             url: "http://localhost:8081/api/resource/",
@@ -139,6 +142,7 @@ export default {
         .then(data => {
             this.resources = data.data;
             this.resourcesInitial = data.data;
+            this.loading=false
         })
         .catch(err => {
             console.log(err)

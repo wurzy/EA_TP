@@ -231,7 +231,6 @@ export default {
         submeter() {
             this.loading=true
             var bodyFormData = new FormData();
-            bodyFormData.append('idUser', 1);
             bodyFormData.append('title', this.titulo);
             bodyFormData.append('description', this.descricao);
             bodyFormData.append('registeredAt', this.data + " 00:00:00");
@@ -247,7 +246,7 @@ export default {
                 method: "post",
                 url: "http://localhost:8081/api/resource/",
                 data: bodyFormData,
-                headers: { "Content-Type": "multipart/form-data" },
+                headers: { "Content-Type": "multipart/form-data" , "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
             })
             .then(data => {
                     alert('Recurso adicionado com sucesso!')
