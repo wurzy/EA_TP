@@ -158,7 +158,7 @@ public class ResourceBean {
             Resources u = ResourcesDAO.getResourcesByORMID(id);
             if(u==null) return null;
             if(idUser == -1 && !u.getVisibility()) return null;
-            if(idUser != u.getIdUser().getIdUser()) return null;
+            if(idUser!= u.getIdUser().getIdUser() && !u.getVisibility()) return null;
             Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
             Files[] fs = FilesDAO.listFilesByQuery("idResource="+id,null);
             Posts[] ps = PostsDAO.listPostsByQuery("idResource="+id,null);
