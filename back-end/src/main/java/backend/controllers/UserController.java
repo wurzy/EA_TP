@@ -89,10 +89,10 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public UserJSON register(@RequestParam("image") MultipartFile image, @RequestParam String name, @RequestParam String email,@RequestParam String password,@RequestParam java.sql.Timestamp registerDate, @RequestParam String description, @RequestParam String type, @RequestParam String affiliation){
-        UserJSON uj = ub.register(new RegisterJSON(name,email,password,registerDate,description,type,affiliation));
+    public UserJSON register(@RequestBody RegisterJSON rj){
+        UserJSON uj = ub.register(rj);
         if( uj !=null) {
-            fsb.savePicture(image,uj.getIdUser());
+            //fsb.savePicture(image,uj.getIdUser());
             return uj;
         }
         else {

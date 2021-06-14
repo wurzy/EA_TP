@@ -100,7 +100,7 @@ public class UserBean {
             RolesDAO.save(r);
             Users u = new Users();
             u.setIdRole(r);
-            u.setPicture("");
+            u.setPicture("1.jpg");
             u.setName(rj.getName());
             u.setEmail(rj.getEmail());
             u.setPassword(rj.getPassword());
