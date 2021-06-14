@@ -98,4 +98,44 @@ public class PostBean {
         }
         return null;
     }
+
+    public PostJSON changeComment(int id, int idUser, SimpleCommentJSON cj){
+        try{
+            Comments c = CommentsDAO.getCommentsByORMID(id);
+            if (c.getIdUser().getIdUser() != idUser) return null;
+            c.setBody(cj.getBody());
+            c.setCreatedAt(cj.getCreatedAt());
+            CommentsDAO.save(c);
+            Comments[] ps = CommentsDAO.listCommentsByQuery("idPost="+c.getIdPost().getIdPost(),null);
+            CommentJSON[] s = new CommentJSON[ps.length];
+            for(int i = 0; i < ps.length; i++){
+                s[i] = new CommentJSON(ps[i]);
+            }
+            return new PostJSON(c.getIdPost(),s);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public PostJSON deleteComment(int id, int idUser){
+        try{
+            Comments c = CommentsDAO.getCommentsByORMID(id);
+            if (c.getIdUser().getIdUser() != idUser) return null;
+            Posts p = c.getIdPost();
+            int post = p.getIdPost();
+            CommentsDAO.deleteAndDissociate(c);
+            Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+post,null);
+            CommentJSON[] s = new CommentJSON[cs.length];
+            for(int i = 0; i < cs.length; i++){
+                s[i] = new CommentJSON(cs[i]);
+            }
+            return new PostJSON(p,s);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

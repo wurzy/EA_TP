@@ -16,4 +16,5 @@ public interface ResourceLocal {
     RatingsJSON rateResource(int id, int idUser, RateResourceJSON rrj);
     ResourceJSON incDownloads(int id);
     ResourceJSON delResource(int id, int idUser);
+    ResourceJSON[] getRecentResources();
 }

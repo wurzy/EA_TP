@@ -5,6 +5,7 @@ import backend.dao.*;
 import backend.json.*;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
@@ -248,6 +249,37 @@ public class ResourceBean {
             }
             ResourcesDAO.delete(r);
             return new ResourceJSON(r,rs,fs,pjs);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public ResourceJSON[] getRecentResources(){
+        try{
+            Resources[] us1 = ResourcesDAO.listResourcesByQuery(null,"lastModifiedAt DESC");
+            Resources[] us = new Resources[3];
+            for(int i = 0; i < 3; i++){
+                us[i] = us1[i];
+            }
+            ResourceJSON[] s = new ResourceJSON[us.length];
+            for(int i = 0; i < us.length; i++){
+                Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+us[i].getIdResource(),null);
+                Files[] fs = FilesDAO.listFilesByQuery("idResource="+us[i],null);
+                Posts[] ps = PostsDAO.listPostsByQuery("idResource="+us[i],null);
+                PostJSON[] pjs = new PostJSON[ps.length];
+                for(int j = 0 ; j < ps.length; j++){
+                    Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                    CommentJSON[] cjs = new CommentJSON[cs.length];
+                    for(int x = 0; x < cs.length; x++){
+                        cjs[x] = new CommentJSON(cs[x]);
+                    }
+                    pjs[j] = new PostJSON(ps[j],cjs);
+                }
+                s[i] = new ResourceJSON(us[i],rs,fs,pjs);
+            }
+            return s;
         }
         catch(Exception e){
             e.printStackTrace();

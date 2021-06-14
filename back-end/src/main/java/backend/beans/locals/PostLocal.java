@@ -11,4 +11,6 @@ public interface PostLocal {
     PostJSON createPost(CreatePostJSON cpj);
     PostJSON getPost(int id);
     PostJSON addComment(int id, int idUser, SimpleCommentJSON cj);
+    PostJSON changeComment(int id, int idUser, SimpleCommentJSON cj);
+    PostJSON deleteComment(int id, int idUser);
 }

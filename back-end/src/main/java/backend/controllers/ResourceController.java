@@ -57,6 +57,13 @@ public class ResourceController {
         return rb.getResourcesOfType(type);
     }
 
+    @GetMapping("/recent/")
+    public ResourceJSON[] getRecentResources(@RequestHeader(value="Authorization") String token){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        return rb.getRecentResources();
+    }
+
     @PostMapping( "/download/")
     public ResponseEntity<StreamingResponseBody> downloadResources(@RequestBody DownloadJSON ids){
         String time = Long.toString(System.currentTimeMillis());

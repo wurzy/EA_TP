@@ -32,6 +32,20 @@ public class PostController {
         return pb.createPost(new CreatePostJSON(title,body,createdAt,(int) cl.get("idUser"),idResource));
     }
 
+    @PostMapping("/comment/update/{id}")
+    public PostJSON changeComment(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestBody SimpleCommentJSON scj){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        return pb.changeComment(id,(int) cl.get("idUser"),scj);
+    }
+
+    @DeleteMapping("/comment/{id}")
+    public PostJSON deleteComment(@RequestHeader(value="Authorization") String token, @PathVariable int id){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        return pb.deleteComment(id,(int) cl.get("idUser"));
+    }
+
     @PostMapping("/comment/{id}")
     public PostJSON commentPost(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestBody SimpleCommentJSON scj){
         Claims cl = JWTUtil.decodeJWT(token);
