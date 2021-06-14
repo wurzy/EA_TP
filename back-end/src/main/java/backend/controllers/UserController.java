@@ -20,6 +20,7 @@ import javax.ejb.EJB;
 import java.io.File;
 import java.nio.file.Files;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping(value="/user")
 public class UserController {

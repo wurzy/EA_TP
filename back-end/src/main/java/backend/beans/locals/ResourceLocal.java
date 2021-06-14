@@ -10,11 +10,11 @@ public interface ResourceLocal {
     Resources createResource(CreateResourceJSON crj);
     Resources updateResource(UpdateResourceJSON crj, int idUser);
     TypesJSON[] getResourceTypes();
-    ResourceJSON[] getResources();
-    ResourceJSON[] getResourcesOfType(String t);
-    ResourceJSON getResource(int id);
+    ResourceJSON[] getResources(int idUser);
+    ResourceJSON[] getResourcesOfType(String t, int idUser);
+    ResourceJSON getResource(int id, int idUser);
     RatingsJSON rateResource(int id, int idUser, RateResourceJSON rrj);
     ResourceJSON incDownloads(int id);
     ResourceJSON delResource(int id, int idUser);
-    ResourceJSON[] getRecentResources();
+    ResourceJSON[] getRecentResources(int idUser);
 }

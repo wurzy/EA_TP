@@ -30,8 +30,14 @@ public class ResourceController {
     FileSystemBean fsb;
     // atualizar
     @GetMapping("/")
-    public ResourceJSON[] getResources(){
-        return rb.getResources();
+    public ResourceJSON[] getResources(@RequestHeader(value="Authorization", required = false) String token){
+        int idUser = -1;
+        if(token!=null){
+            Claims cl = JWTUtil.decodeJWT(token);
+            if(cl==null) return null;
+            idUser = (int) cl.get("idUser");
+        }
+        return rb.getResources(idUser);
     }
 
     @RequestMapping(value="/file/{id}", method=RequestMethod.GET)
@@ -53,15 +59,25 @@ public class ResourceController {
     }
 
     @GetMapping("/type/{type}")
-    public ResourceJSON[] getResourcesOfType(@PathVariable String type){
-        return rb.getResourcesOfType(type);
+    public ResourceJSON[] getResourcesOfType(@RequestHeader(value="Authorization", required = false) String token, @PathVariable String type){
+        int idUser = -1;
+        if(token!=null){
+            Claims cl = JWTUtil.decodeJWT(token);
+            if(cl==null) return null;
+            idUser = (int) cl.get("idUser");
+        }
+        return rb.getResourcesOfType(type ,idUser);
     }
 
     @GetMapping("/recent/")
-    public ResourceJSON[] getRecentResources(@RequestHeader(value="Authorization") String token){
-        Claims cl = JWTUtil.decodeJWT(token);
-        if(cl==null) return null;
-        return rb.getRecentResources();
+    public ResourceJSON[] getRecentResources(@RequestHeader(value="Authorization", required = false) String token){
+        int idUser = -1;
+        if(token!=null){
+            Claims cl = JWTUtil.decodeJWT(token);
+            if(cl==null) return null;
+            idUser = (int) cl.get("idUser");
+        }
+        return rb.getRecentResources(idUser);
     }
 
     @PostMapping( "/download/")
@@ -82,8 +98,14 @@ public class ResourceController {
     }
 
     @GetMapping("/{id}")
-    public ResourceJSON getResource(@PathVariable int id){
-        return rb.getResource(id);
+    public ResourceJSON getResource(@RequestHeader(value="Authorization", required = false) String token, @PathVariable int id){
+        int idUser = -1;
+        if (token!=null){
+            Claims cl = JWTUtil.decodeJWT(token);
+            if(cl==null) return null;
+            idUser = (int) cl.get("idUser");
+        }
+        return rb.getResource(id,idUser);
     }
 
     @GetMapping("/types")
