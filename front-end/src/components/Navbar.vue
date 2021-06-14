@@ -1,49 +1,79 @@
 <template>
   
   <div id="navbar-max">
-    <v-layout row justify-center class="navbar">
-      <v-toolbar color="#57a2bf" class="hidden-xs-and-down">
-        <v-img
-        class="logo"
-        max-height="40"
-        max-width="40"
-        src="../assets/redu.png"
-        ></v-img>
-
-        <v-toolbar-items>
-         <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/"><b>Home</b></router-link>
-         </v-btn>
-         <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>
-         </v-btn>
-         <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>
-         </v-btn>
-        </v-toolbar-items>
-        <v-spacer></v-spacer>
-        <v-toolbar-items>
-         <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/perfil"><b>Perfil</b></router-link>
-         </v-btn>
-         <v-btn class="navbar-button">
-            <router-link class="hyperlink" to="/"><b>Logout</b></router-link>
-         </v-btn>
-        </v-toolbar-items>
-        </v-toolbar>
-    </v-layout>
+    <div v-if="token">
+      <v-layout row justify-center class="navbar">
+        <v-toolbar color="#57a2bf" class="hidden-xs-and-down">
+          <v-img
+          class="logo"
+          max-height="40"
+          max-width="40"
+          src="../assets/redu.png"
+          ></v-img>
+            <v-toolbar-items>
+             <v-btn class="navbar-button">
+                <router-link class="hyperlink" to="/"><b>Home</b></router-link>
+             </v-btn>
+             <v-btn class="navbar-button">
+                <router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>
+             </v-btn>
+             <v-btn class="navbar-button">
+                <router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>
+             </v-btn>
+            </v-toolbar-items>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+             <v-btn class="navbar-button">
+                <router-link class="hyperlink" to="/perfil"><b>Perfil</b></router-link>
+             </v-btn>
+             <v-btn class="navbar-button">
+                <span @click="handleLogout()"> Logout </span>
+             </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+      </v-layout>
+    </div>
+    <div v-else>
+      <v-layout row justify-center class="navbar">
+        <v-toolbar color="#57a2bf" class="hidden-xs-and-down">
+          <v-img
+          class="logo"
+          max-height="40"
+          max-width="40"
+          src="../assets/redu.png"
+          ></v-img>
+            <v-spacer></v-spacer>
+            <v-toolbar-items>
+             <v-btn class="navbar-button">
+                <Login/>
+             </v-btn>
+            </v-toolbar-items>
+          </v-toolbar>
+      </v-layout>
+    </div>
   </div>
 
 </template>
 
 <script>
-//import HelloWorld from "./components/HelloWorld";
+import Login from "@/views/Login.vue";
+
 
 export default {
   name: "App",
+  components: {
+    Login
+  },
+  methods: {
+    handleLogout() {
+      localStorage.clear();
+      this.$router.go()
+    }
+  },
   data () {
     return {
       dialog: false,
+      token: localStorage.getItem('jwt'),
       nav: [
         {
           icon: 'home',

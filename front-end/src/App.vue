@@ -1,7 +1,12 @@
 <template>
   <v-app id="app">
     <Navbar/>
-    <router-view></router-view>
+    <div v-if="token">
+      <router-view></router-view>
+    </div>
+    <div v-else>
+      <span> FAZ LOGIN BURRO </span>
+    </div>
   </v-app>
 </template>
 
@@ -13,6 +18,7 @@ export default {
   name: 'App',
   data() {
     return {
+      token:localStorage.getItem('jwt'),
     }
   },
   components:{

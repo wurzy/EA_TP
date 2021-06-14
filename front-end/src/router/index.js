@@ -18,7 +18,7 @@ const routes = [
     component: Home
   },
   {
-    path: '/recursos',
+    path: '/recursos/type/:type',
     name: 'Recursos',
     component: Recursos
   },
