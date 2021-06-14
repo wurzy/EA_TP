@@ -55,6 +55,24 @@ public class PostBean {
         return null;
     }
 
+    public PostJSON updatePost(int id, CreatePostJSON cpj) {
+        try{
+            Posts p = PostsDAO.getPostsByORMID(id);
+            if(p.getIdUser().getIdUser() != cpj.getIdUser()) return null;
+            p.setTitle(cpj.getTitle());
+            p.setBody(cpj.getBody());
+            p.setCreatedAt(cpj.getCreatedAt());
+            p.setIdResource(ResourcesDAO.getResourcesByORMID(cpj.getIdResource()));
+            p.setIdUser(UsersDAO.getUsersByORMID(cpj.getIdUser()));
+            PostsDAO.save(p);
+            return new PostJSON(p, new CommentJSON[0]);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     public PostJSON getPost(int id){
         try {
             Posts u = PostsDAO.getPostsByORMID(id);
@@ -132,6 +150,25 @@ public class PostBean {
                 s[i] = new CommentJSON(cs[i]);
             }
             return new PostJSON(p,s);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public PostJSON deletePost(int id, int idUser){
+        try{
+            Posts p = PostsDAO.getPostsByORMID(id);
+            if(p.getIdUser().getIdUser() != idUser) return null;
+            Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+id,null);
+            CommentJSON[] s = new CommentJSON[cs.length];
+            for(int i = 0; i < cs.length; i++){
+                s[i] = new CommentJSON(cs[i]);
+                CommentsDAO.deleteAndDissociate(cs[i]);
+            }
+            PostsDAO.deleteAndDissociate(p);
+            return new PostJSON(p, s);
         }
         catch(Exception e){
             e.printStackTrace();

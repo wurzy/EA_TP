@@ -63,7 +63,7 @@ public class UserController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PostMapping("/update/{id}")
     public UserJSON changeUserInfo(@RequestHeader(value="Authorization") String token, @PathVariable Integer id, @RequestBody UserProfileJSON upj){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null || id!=(int)cl.get("idUser")) return null;
