@@ -2,13 +2,11 @@ package backend.controllers;
 
 import backend.beans.FileSystemBean;
 import backend.beans.ResourceBean;
-import backend.dao.Files;
-import backend.dao.FilesDAO;
-import backend.dao.Ratings;
-import backend.dao.Resources;
+import backend.dao.*;
 import backend.json.*;
+import backend.util.JWTUtil;
+import io.jsonwebtoken.Claims;
 import org.apache.tika.Tika;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,12 +15,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.activation.FileTypeMap;
 import javax.ejb.EJB;
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
-import java.util.HashMap;
-import java.util.List;
 import java.util.zip.ZipOutputStream;
 
 @CrossOrigin("*")
@@ -39,14 +33,6 @@ public class ResourceController {
     public ResourceJSON[] getResources(){
         return rb.getResources();
     }
-
-    /*
-    @GetMapping("/file/{id}")
-    public FileSystemResource getFile(@PathVariable int id){
-        File img = fsb.getFile(id);
-        return new FileSystemResource(img);
-    }
-     */
 
     @RequestMapping(value="/file/{id}", method=RequestMethod.GET)
     public ResponseEntity<byte[]> getFile(@PathVariable int id){
@@ -99,25 +85,54 @@ public class ResourceController {
     }
 
     @PostMapping("/rate/{id}")
-    public RatingsJSON rateResource(@PathVariable int id, @RequestBody RateResourceJSON rrj){
-        return rb.rateResource(id,rrj);
+    public RatingsJSON rateResource(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestBody RateResourceJSON rrj){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        return rb.rateResource(id,(int) cl.get("idUser"),rrj);
     }
 
     @PostMapping("/")
-    public ResourceJSON upload(@RequestParam String title, @RequestParam String description, @RequestParam java.sql.Timestamp registeredAt, @RequestParam boolean visibility, @RequestParam int idUser, @RequestParam String type, @RequestParam("file") MultipartFile[] files){
-        Resources r = rb.createResource(new CreateResourceJSON(title,description,registeredAt,visibility,idUser,type));
+    public ResourceJSON upload(@RequestHeader(value="Authorization") String token, @RequestParam String title, @RequestParam String description, @RequestParam java.sql.Timestamp registeredAt, @RequestParam boolean visibility, @RequestParam String type, @RequestParam("file") MultipartFile[] files){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        Resources r = rb.createResource(new CreateResourceJSON(title,description,registeredAt,visibility,(int)cl.get("idUser"),type));
         Files[] fs = fsb.saveFiles(files,r);
         return new ResourceJSON(r,new Ratings[0], fs, new PostJSON[0]);
     }
 
-    //@PostMapping("/inc_downloads/{id}")
-    //public ResourceJSON incDownloads(@PathVariable int id){
-    //    return rb.incDownloads(id);
-    //}
+    @PostMapping("/update/{id}")
+    public ResourceJSON update(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestParam String title, @RequestParam String description, @RequestParam java.sql.Timestamp registeredAt, @RequestParam boolean visibility, @RequestParam String type, @RequestParam int[] delete, @RequestParam("file") MultipartFile[] files){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        Resources r = rb.updateResource(new UpdateResourceJSON(id,title,description,registeredAt,visibility,(int)cl.get("idUser"),type,delete), (int)cl.get("idUser"));
+        fsb.saveFiles(files,r);
+        Files[] fs = fsb.delFiles(delete,r);
+        try{
+            Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
+            Posts[] ps = PostsDAO.listPostsByQuery("idResource="+id,null);
+            PostJSON[] pjs = new PostJSON[ps.length];
+            for(int j = 0 ; j < ps.length; j++){
+                Comments[] cs = CommentsDAO.listCommentsByQuery("idPost="+ps[j].getIdPost(),null);
+                CommentJSON[] cjs = new CommentJSON[cs.length];
+                for(int x = 0; x < cs.length; x++){
+                    cjs[x] = new CommentJSON(cs[x]);
+                }
+                pjs[j] = new PostJSON(ps[j],cjs);
+            }
+            return new ResourceJSON(r,rs,fs,pjs);
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     @DeleteMapping("/{id}")
-    public ResourceJSON deleteResource(@PathVariable int id){
-        return rb.delResource(id);
+    public ResourceJSON deleteResource(@RequestHeader(value="Authorization") String token, @PathVariable int id){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null) return null;
+        return rb.delResource(id, (int) cl.get("idUser"));
     }
 
 }

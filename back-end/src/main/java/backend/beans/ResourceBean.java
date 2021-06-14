@@ -5,6 +5,7 @@ import backend.dao.*;
 import backend.json.*;
 import org.springframework.stereotype.Component;
 
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
 import java.time.Instant;
@@ -13,15 +14,18 @@ import java.time.Instant;
 @Local(ResourceLocal.class)
 @Component
 public class ResourceBean {
+    @EJB
+    UpdateBean ub;
 
     public Resources createResource(CreateResourceJSON crj){
         try{
+           java.sql.Timestamp ts = java.sql.Timestamp.from(Instant.now());
            Resources r = new Resources();
            r.setTitle(crj.getTitle());
            r.setDescription(crj.getDescription());
-           r.setCreatedAt(java.sql.Timestamp.from(Instant.now()));
+           r.setCreatedAt(ts);
            r.setRegisteredAt(crj.getRegisteredAt());
-           r.setLastModifiedAt(java.sql.Timestamp.from(Instant.now()));
+           r.setLastModifiedAt(ts);
            r.setVisibility(crj.getVisibility());
            r.setnDownloads(0);
            r.setAvailable(true);
@@ -34,7 +38,36 @@ public class ResourceBean {
            }
            r.setIdResourceType(rt);
            ResourcesDAO.save(r);
+           ub.createUpdate(crj.getIdUser(),"Novo Recurso",r,ts);
            return r;
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Resources updateResource(UpdateResourceJSON crj, int idUser){
+        try{
+            if(crj.getIdUser()!=idUser) return null;
+            java.sql.Timestamp ts = java.sql.Timestamp.from(Instant.now());
+            Resources r = ResourcesDAO.getResourcesByORMID(crj.getIdResource());
+            r.setTitle(crj.getTitle());
+            r.setDescription(crj.getDescription());
+            r.setRegisteredAt(crj.getRegisteredAt());
+            r.setLastModifiedAt(ts);
+            r.setVisibility(crj.getVisibility());
+            r.setAvailable(true);
+            Resourcetypes rt = ResourcetypesDAO.loadResourcetypesByQuery("type='"+crj.getType()+"'",null);
+            if(rt==null){
+                rt = new Resourcetypes();
+                rt.setType(crj.getType());
+                ResourcetypesDAO.save(rt);
+            }
+            r.setIdResourceType(rt);
+            ResourcesDAO.save(r);
+            ub.createUpdate(crj.getIdUser(),"Update Recurso",r,ts);
+            return r;
         }
         catch (Exception e){
             e.printStackTrace();
@@ -143,13 +176,13 @@ public class ResourceBean {
         return null;
     }
 
-    public RatingsJSON rateResource(int id, RateResourceJSON rrj){
+    public RatingsJSON rateResource(int id, int idUser, RateResourceJSON rrj){
         try{
-            Ratings r = RatingsDAO.loadRatingsByQuery("idUser=" + rrj.getIdUser() + " and idResource="+id,null);
+            Ratings r = RatingsDAO.loadRatingsByQuery("idUser=" + idUser + " and idResource="+id,null);
             if(r==null){
                 r = new Ratings();
                 r.setIdResource(ResourcesDAO.getResourcesByORMID(id));
-                r.setIdUser(UsersDAO.getUsersByORMID(rrj.getIdUser()));
+                r.setIdUser(UsersDAO.getUsersByORMID(idUser));
             }
             r.setRating(rrj.getRating());
             RatingsDAO.save(r);
@@ -186,10 +219,11 @@ public class ResourceBean {
         return null;
     }
 
-    public ResourceJSON delResource(int id){
+    public ResourceJSON delResource(int id, int idUser){
         // FILESYSTEM BEAN REMOVER OS FICHEIROS DO FILESYSTEM
         try{
             Resources r = ResourcesDAO.getResourcesByORMID(id);
+            if(r.getIdUser().getIdUser()!=idUser) return null;
             Ratings[] rs = RatingsDAO.listRatingsByQuery("idResource="+id,null);
             Updates[] us = UpdatesDAO.listUpdatesByQuery("idResource="+id,null);
             Files[] fs = FilesDAO.listFilesByQuery("idResource="+id,null);

@@ -13,6 +13,7 @@ import java.util.zip.ZipOutputStream;
 @Local
 public interface FileSystemLocal {
     backend.dao.Files[] saveFiles(MultipartFile[] files, Resources r);
+    backend.dao.Files[] delFiles(int[] delete, Resources r);
     String savePicture(MultipartFile file, int id);
     File getImage(String name);
     File getFile(int id);

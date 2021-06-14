@@ -30,7 +30,7 @@ public class UserController {
     FileSystemBean fsb;
 
     @GetMapping("/")
-    public UserJSON[] getUsers() throws Exception{
+    public UserJSON[] getUsers(){
         return ub.getUsers();
     }
 
@@ -63,12 +63,16 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public UserJSON changeUserInfo(@PathVariable Integer id, @RequestBody UserProfileJSON upj){
+    public UserJSON changeUserInfo(@RequestHeader(value="Authorization") String token, @PathVariable Integer id, @RequestBody UserProfileJSON upj){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null || id!=(int)cl.get("idUser")) return null;
         return ub.changeUserInfo(id,upj);
     }
 
     @PutMapping("/image/{id}")
-    public String changePicture(@PathVariable Integer id,@RequestParam("image") MultipartFile image){
+    public String changePicture(@RequestHeader(value="Authorization") String token, @PathVariable Integer id,@RequestParam("image") MultipartFile image){
+        Claims cl = JWTUtil.decodeJWT(token);
+        if(cl==null || id!=(int)cl.get("idUser")) return null;
         return fsb.savePicture(image, id);
     }
 

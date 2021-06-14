@@ -43,13 +43,13 @@ public class UpdateBean {
         return null;
     }
 
-    public UpdateJSON createUpdate(CreateUpdateJSON cuj) {
+    public UpdateJSON createUpdate(int idUser, String state, Resources r, java.sql.Timestamp ts) {
         try{
             Updates up = new Updates();
-            up.setCreatedAt(cuj.getCreatedAt());
-            up.setIdResource(ResourcesDAO.getResourcesByORMID(cuj.getIdResource()));
-            up.setIdUser(UsersDAO.getUsersByORMID(cuj.getIdUser()));
-            up.setState(cuj.getState());
+            up.setCreatedAt(ts);
+            up.setIdResource(r);
+            up.setIdUser(UsersDAO.getUsersByORMID(idUser));
+            up.setState(state);
             UpdatesDAO.save(up);
             return new UpdateJSON(up);
         }

@@ -5,13 +5,17 @@ import backend.dao.*;
 import backend.json.*;
 import org.springframework.stereotype.Component;
 
+import javax.ejb.EJB;
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.time.Instant;
 
 @Stateless(name = "PostBeanEJB")
 @Local(PostLocal.class)
 @Component
 public class PostBean {
+    @EJB
+    UpdateBean ub;
 
     public PostJSON[] getPosts(){
         try{
@@ -42,6 +46,7 @@ public class PostBean {
             p.setIdResource(ResourcesDAO.getResourcesByORMID(cpj.getIdResource()));
             p.setIdUser(UsersDAO.getUsersByORMID(cpj.getIdUser()));
             PostsDAO.save(p);
+            ub.createUpdate(cpj.getIdUser(),"Novo Post",ResourcesDAO.getResourcesByORMID(cpj.getIdResource()),java.sql.Timestamp.from(Instant.now()));
             return new PostJSON(p, new CommentJSON[0]);
         }
         catch (Exception e){
@@ -71,10 +76,10 @@ public class PostBean {
         return null;
     }
 
-    public PostJSON addComment(int id, SimpleCommentJSON cj){
+    public PostJSON addComment(int id, int idUser, SimpleCommentJSON cj){
         try{
             Posts p = PostsDAO.getPostsByORMID(id);
-            Users u = UsersDAO.getUsersByORMID(cj.getIdUser());
+            Users u = UsersDAO.getUsersByORMID(idUser);
             Comments c = new Comments();
             c.setBody(cj.getBody());
             c.setIdPost(p);

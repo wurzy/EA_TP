@@ -26,6 +26,7 @@ public class UpdateController {
         return ub.getUpdatesUser(idUser);
     }
 
+    /*
     @PostMapping("/")
     public UpdateJSON createUpdate(@RequestBody CreateUpdateJSON cuj){
         return ub.createUpdate(cuj);
@@ -35,4 +36,5 @@ public class UpdateController {
     public UpdateJSON[] changeState(@PathVariable int idResource, @RequestBody SimpleStateJSON ssj){
         return ub.changeState(idResource,ssj);
     }
+    */
 }

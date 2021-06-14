@@ -28,6 +28,23 @@ public class FileSystemBean {
     private final String imagesDirectory = System.getProperty("user.dir")+"/uploads/images";
     private final String resourceDirectory = System.getProperty("user.dir")+"/uploads/files";
 
+    public backend.dao.Files[] delFiles(int[] delete, Resources r){
+        try{
+            for(int i: delete){
+                backend.dao.Files f = FilesDAO.getFilesByORMID(i);
+                File ff = new File(resourceDirectory + "/" + f.getPath());
+                if(f.getIdResource().getIdResource() == r.getIdResource()) {
+                    FilesDAO.deleteAndDissociate(f);
+                    ff.delete();
+                }
+            }
+            return FilesDAO.listFilesByQuery("idResource="+r.getIdResource(),null);
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     public backend.dao.Files[] saveFiles(MultipartFile[] files, Resources r) {
         try{
