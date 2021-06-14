@@ -6,7 +6,7 @@
                 <v-row>
                   <v-col cols="1" sm="3">
                       <v-avatar size="150">
-                          <v-img v-if="user.picture" src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                          <v-img v-if="this.imageOri" :src="this.imageOri"></v-img>
                           <v-img v-else src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
                       </v-avatar>
                   </v-col>
@@ -17,12 +17,17 @@
                       <span style="font-size: 22px;" > <b>Filiação: </b> {{user.role.affiliation}} <br/> </span>
                       <span style="font-size: 22px;"> <i> Registado desde {{user.registerDate.split("T")[0]}} </i></span>
                   </v-col>
-                
-                  <v-col align="right">
+                  
+                  <v-col v-if="this.visivel" align="right">
                     <v-btn @click="editarPerfil()" color='#53a6bf'> Editar Perfil </v-btn>
-                    
-                    <v-btn @click="mudarFoto()" color='#53a6bf'> Mudar Foto </v-btn>
+                    <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
+                    <v-btn @click="$refs.fileInput.click()" color='#53a6bf'> Escolher Foto </v-btn>
+                   
+                    <v-btn v-if="this.imageTemp" @click="mudarFoto" color='#53a6bf'> Mudar Foto </v-btn>
+                   
                   </v-col>
+                
+                 
                   
                 </v-row>
                
@@ -88,16 +93,21 @@ export default {
     data() {
         return { 
             list:[],
-            user: ''
+            user: '',
+            imageTemp: null,
+            imageOri: null,
+            visivel: false
          
         }
     },
     components: {
     },
     created() {
+        if(this.$route.params.id==1){this.visivel=true}
+        else{this.visivel=false}
         axios({
             method: "get",
-            url: "http://localhost:8081/api/user/1",
+            url: "http://localhost:8081/api/user/"+this.$route.params.id+"/",
             headers: { "Content-Type": "multipart/form-data" },
         })
         .then(data => {
@@ -138,14 +148,24 @@ export default {
             }
             ]
         }]
-            
-            console.log(this.list)
-
-            console.log(this.user)
+          console.log(this.user)
+            axios({
+            method: "get",
+            url: "http://localhost:8081/api/user/image/thumbnail/"+this.user.picture+"/",
+            responseType: 'blob',})
+            .then(res => {
+              this.imageOri = URL.createObjectURL(res.data)
+              console.log(data)
+            })
+            .catch(err => {
+              console.log(err)
+            })
         })
         .catch(err => {
             console.log(err)
         })
+        
+        
     },
     methods: {
       dataToDia(data) {
@@ -162,6 +182,29 @@ export default {
         let date = new Date(data.split("-")[0],data.split("-")[1], data.split("-")[2]); // 2020-06-21
         let Month = date.toLocaleString('pt-pt', { month: 'long' });
         return Month.charAt(0).toUpperCase() + Month.substring(1) +" "+data.split("-")[0]
+      },
+      onFileSelected(event){
+        this.imageTemp = event.target.files[0]
+      },
+      mudarFoto(){
+        const fd =  new FormData();
+        fd.append('image', this.imageTemp, this.imageTemp.name)
+        axios({
+                method: "post",
+                url: "http://localhost:8081/api/user/image/1/",
+                data: fd,
+                headers: { "Content-Type": "multipart/form-data" , "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
+            })
+            .then( res => {
+                  this.imageOri = URL.createObjectURL(this.imageTemp)
+                    alert('Recurso adicionado com sucesso!',res)
+                  
+                })
+            .catch(err => {
+                    console.log(err)
+                    alert('Não foi possível adicionar novo recurso')
+                   
+                })
       }
     
     

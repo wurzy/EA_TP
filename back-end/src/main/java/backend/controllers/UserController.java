@@ -70,7 +70,7 @@ public class UserController {
         return ub.changeUserInfo(id,upj);
     }
 
-    @PutMapping("/image/{id}")
+    @PostMapping("/image/{id}")
     public String changePicture(@RequestHeader(value="Authorization") String token, @PathVariable Integer id,@RequestParam("image") MultipartFile image){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null || id!=(int)cl.get("idUser")) return null;
