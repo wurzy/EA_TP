@@ -1,6 +1,6 @@
 <template>
     <div id="newRate">
-        <v-dialog max-width="900px" v-model="show">
+        <v-dialog max-width="500px" v-model="show">
             <template v-slot:activator="{ on }">
                 <v-btn small v-on="on">Classificar</v-btn>
             </template>
@@ -8,21 +8,23 @@
                 <v-card-text >
                     <v-container>
                         
-                        <v-col id="titulo">
+                        <v-col id="titulo" align="center">
                             <h1>Nova classificação</h1>
                         </v-col>
 
-                        <v-col style="margin-top:30px">
-                            <v-slider
+                        <v-col style="margin-top:30px" align="center">
+                            <v-rating
                               v-model="rate"
-                              color="#00ace6"
-                              min="1"
-                              max="100"
-                              thumb-label
-                            ></v-slider>
+                              color="yellow darken-3"
+                              background-color="grey darken-1"
+                              empty-icon="$ratingEmpty"
+                              half-increments
+                              hover
+                              large
+                            ></v-rating>
                         </v-col>
 
-                        <v-col align="right">
+                        <v-col align="center" style="margin-top:30px">
                           <v-btn :loading="loading" v-ripple="{ class: 'primary--text' }" width="150" style="height:40px" class="white--text" elevation="1" v-on:click="submeter()" color="#00ace6">Submeter</v-btn>
                           <v-btn v-ripple="{ class: 'primary--text' }" width="150" style="margin-left:10px;height:40px" class="white--text" elevation="1" v-on:click="cancelar()" color="#527a7a">Cancelar</v-btn>
                         </v-col>
@@ -44,7 +46,8 @@ export default {
         return{
           show:false,
           loading:false,
-          rate:0
+          rate:0,
+          idUser:null,
         }
     },
     props: {
@@ -56,19 +59,18 @@ export default {
             this.loading=false
         },
         submeter() {
-            console.log(this.value)
             console.log(this.rate)
             var json={}
-            json['rating'] = this.rate
-            json['idUser'] = 1
+            json['rating'] = this.rate * 20
+            json['idUser'] = this.idUser
+            var token = localStorage.getItem('jwt')
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/resource/rate/"+this.value,
                 data: json,
-                headers: { "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
+                headers: { "Authorization" : token},
             })
-            .then((data) => {
-                    console.log(data.data)
+            .then(() => {
                     alert('Classificação efetuada com sucesso!')
                     this.cancelar()
                     this.$router.go()
@@ -79,6 +81,20 @@ export default {
                     this.cancelar();
                 })
         }
+    },
+    created() {
+        var token = localStorage.getItem('jwt')
+        axios({
+        method: "post",
+        url: "http://localhost:8081/api/user/token/",
+        data: token,
+        })
+        .then(data => {
+            this.idUser = data.data.idUser
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 

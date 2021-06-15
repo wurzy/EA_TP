@@ -31,9 +31,15 @@
                         <NewPub :value="value"/>
                     </template>
                     <template v-slot:[`item.ratings`]="{ value }" >
-                        <div class="stars" :data-percent="getRating(value)">
-                            ★★★★★
-                        </div>
+                        <v-rating
+                          :value="getRating(value)"
+                          color="yellow darken-3"
+                          background-color="grey darken-1"
+                          empty-icon="$ratingEmpty"
+                          half-increments
+                          readonly
+                          small
+                        ></v-rating>
                     </template>
                     <template v-slot:[`item.lastModifiedAt`]="{ value}" >
                         {{value.split("T")[0]}}
@@ -120,7 +126,7 @@ export default {
             lista.forEach(elem => rating += elem.rating)
             rating = rating / lista.length
             if (lista.length==0) return 0
-            else return rating
+            else return rating * 5 / 100
         },
         filtrar(obj) {
             var name = obj.title
@@ -177,8 +183,6 @@ export default {
 
 
 <style>
-
-@import '../assets/rating.css';
 
 #mytable table thead {
   background: #80dfff;

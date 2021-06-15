@@ -18,7 +18,7 @@
         <v-container v-if="item">
             
             <h1> {{item.title}}</h1>
-            <v-col align="center">
+            <v-col v-if="item.posts.length>0" align="center">
                 <a style="color:black;" v-scroll-to="'#pubs'" href="#">Ver Publicações</a>
             </v-col>
             <v-row v-if="idUser==item.idUser.idUser">
@@ -30,7 +30,7 @@
                 </v-col>
             </v-row>
 
-            <v-row style="padding: 70px 0 0 0">
+            <v-row style="padding: 25px 0 0 0">
                 <v-col cols=2 offset=2 class="pa-0" @click="updateSelected('info')">   
                   <v-card elevation="0" outlined :style="selected=='info' ? 'background-color: inherit' : 'background-color:#ddd'">
                       <v-card-title class="justify-center">Informação</v-card-title>
@@ -57,7 +57,15 @@
                                 <br>
                                 <b>Data de Registo: </b> {{this.item.registeredAt.split("T")[0]}}<br>
                                 <br>
-                                <b>Classificação: </b> {{ getRating(this.item.ratings) }}
+                                <b>Classificação: </b> 
+                                <v-rating
+                                  v-model="rating"
+                                  color="yellow darken-3"
+                                  background-color="grey darken-1"
+                                  empty-icon="$ratingEmpty"
+                                  half-increments
+                                  readonly
+                                ></v-rating>
                                 <br>
                             </v-col>
                             <v-col cols=6 class="pa-10">
@@ -150,6 +158,7 @@ export default {
     name: 'Recurso',
     data() {
         return { 
+            rating:0,
             idUser:null,
             ficheiroAtual: null,
             url:'',
@@ -251,6 +260,7 @@ export default {
             this.item = data.data;
             var posts = this.item.posts.sort((a,b) => (a.createdAt < b.createdAt) ? 1 : ((b.createdAt < a.createdAt) ? -1 : 0))
             this.item.posts = posts
+            this.rating = this.getRating(this.item.ratings)
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/user/token/",
@@ -275,7 +285,6 @@ export default {
 
 
 <style>
-@import '../assets/rating.css';
 
 
 .recurso {
@@ -284,7 +293,7 @@ export default {
 }
 
 .recurso h1{
-    margin-top:30px;
+    margin-top:20px;
     color: #00ace6
 }
 
