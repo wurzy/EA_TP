@@ -74,7 +74,8 @@ export default {
       this.$router.go();
     },
     goToLink(link) {
-      this.$router.push(link)
+      var currentUrl = window.location.pathname;
+      if (currentUrl!=link) this.$router.push(link)
     }
   },
   data () {
@@ -126,9 +127,7 @@ export default {
     })
     .then(data => {
         this.idUser = data.data.idUser
-        console.log(this.idUser)
         this.link = this.link + this.idUser
-        console.log(this.link)
     })
     .catch(err => {
         console.log(err)
