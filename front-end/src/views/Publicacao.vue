@@ -9,7 +9,7 @@
                     <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + pub.user.picture"></v-img>
                 </v-col>
                 <v-col  sm="8" style="padding-left: 10px; padding-top: 20px;" >
-                    <v-text-field v-if="editing" type="text" no-resize v-model="newTitle" rows="4"></v-text-field>
+                    <v-text-field  style="font-size: 25px; " v-if="editing" type="text" no-resize v-model="newTitle" rows="4"></v-text-field>
                     <span v-else style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
                     <span> 
                         <b>Recurso: </b> 
@@ -52,21 +52,26 @@
 
                     <v-col  sm="9" style="border-radius: 5px; background-color: white;">
                         <v-row class="pa-0"> 
-                            <v-col sm="11">
+                            <v-col sm="9">
                                 <span style="font-size: 20px; color: #ec6200;"> {{ n.idUser.name}} </span>
                             </v-col>
-                            <v-col sm="1" align="right">
-                                <v-icon v-if="idUser==n.idUser.idUser" small color="red" @click="removeComentario()"> mdi-close </v-icon>
+                            <v-col sm="3" align="right" v-if="idUser==n.idUser.idUser">
+                                <v-icon style="font-size:14px;margin-right:10px" @click="editCom(n.idComment,n.body)"> mdi-pencil </v-icon>
+                                <v-icon small color="red" @click="removeComentario(n.idComment)"> mdi-close </v-icon>
                             </v-col>
                             <br/> 
                         </v-row>
-                        <span> {{ n.createdAt | moment("from") }} <br/> </span>
+                        <span > {{ n.createdAt | moment("from") }} <br/> </span>
                         <hr>
-                        <span style="padding-top: 10px;"> {{ n.body }} </span>
+                        <v-text-field v-if="n.idComment==editingCom" type="text" v-model="newBodyComment" ></v-text-field>
+                        <span v-else style="padding-top: 10px;"> {{ n.body }} </span>
                     </v-col>
                     
-                    
-
+                  </v-row>
+                  <v-row>
+                    <v-col offset="9" v-if="n.idComment==editingCom">
+                        <v-btn small @click="editComentario(n.idComment,n.createdAt)">Guardar</v-btn>
+                    </v-col>
                   </v-row>
               </v-col>
             </v-row>
@@ -85,6 +90,8 @@ export default {
     name: 'Publicacao',
     data() {
         return { 
+            newBodyComment:'',
+            editingCom: -1,
             editing: false,
             idUser: null,
             com:"",
@@ -100,6 +107,10 @@ export default {
         },
         sorted(lista) {
             return lista.sort((a,b) => (a.createdAt < b.createdAt) ? 1 : ((b.createdAt < a.createdAt) ? -1 : 0))
+        },
+        editCom(id,body){
+            this.editingCom==-1 ? this.editingCom=id : this.editingCom=-1
+            this.newBodyComment = body
         },
         addComment() {
             var json = {};
@@ -122,6 +133,7 @@ export default {
                 })
         },
         removePost(){
+            if(confirm("Tem a certeza que deseja remover?")){
             var id = this.$route.params.id
             axios({
                 method: "post",
@@ -133,13 +145,14 @@ export default {
             })
             .catch(err => {
                 console.log(err)
-            })
+            })}
         },
         editPost(){
             var id = this.$route.params.id
             var json = {}
             json['title'] = this.newTitle
             json['body'] = this.newBody
+            console.log(json)
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/post/update/"+id,
@@ -153,12 +166,30 @@ export default {
                 console.log(err)
             })
         },
-        removeComentario(){
-            var id = this.$route.params.id
-            axios({
+        removeComentario(id){
+            if(confirm("Tem a certeza que deseja remover?")){
+              axios({
                 method: "post",
                 url: "http://localhost:8081/api/post/comment/delete/"+id,
                 headers: { "Authorization" : this.token }
+               })
+               .then(() => {
+                   this.$router.go()
+               })
+               .catch(err => {
+                   console.log(err)
+               })
+           }
+        },
+        editComentario(id,data){
+            var json = {}
+            json['body'] = this.newBodyComment
+            json['createdAt'] = data
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/comment/update/"+id,
+                headers: { "Authorization" : this.token },
+                data: json
             })
             .then(() => {
                 this.$router.go()
@@ -227,5 +258,7 @@ export default {
     width: 100%;
     padding-right: 10px;
 }
+
+
 
 </style>

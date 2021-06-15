@@ -18,10 +18,14 @@
         <v-container v-if="item">
             
             <h1> {{item.title}}</h1>
-
-            <v-col v-if="idUser==item.idUser.idUser" align="right">
-                <v-icon color="red" large @click="removeResource()"> mdi-delete </v-icon>
-            </v-col>
+            <v-row v-if="idUser==item.idUser.idUser">
+                <v-col offset="10">
+                    <EditRec :recurso="item"/>
+                </v-col>
+                <v-col>
+                    <v-icon color="red" large @click="removeResource()"> mdi-close </v-icon>
+                </v-col>
+            </v-row>
 
             <v-row style="padding: 70px 0 0 0">
                 <v-col cols=2 offset=2 class="pa-0" @click="updateSelected('info')">   
@@ -136,6 +140,7 @@ import axios from 'axios'
 import NewPub from '@/views/NovaPublicação.vue'
 import NewRate from '@/views/Classificar.vue'
 import FileDownload from 'js-file-download';
+import EditRec from '@/views/EditarRecurso.vue'
 
 
 export default {
@@ -157,7 +162,8 @@ export default {
     },
     components: {
         NewPub,
-        NewRate
+        NewRate,
+        EditRec
     },
     methods: {
         updateSelected(value) {
@@ -167,6 +173,7 @@ export default {
             this.$router.push('/publicacao/' + value)      
         },
         removeResource(){
+            if(confirm("Tem a certeza que deseja remover?")){
             var id = this.$route.params.id
             var token = localStorage.getItem('jwt')
             axios({
@@ -179,7 +186,7 @@ export default {
             })
             .catch(err => {
                 console.log(err)
-            })
+            })}
         },
         getTotalSize() {
             var total = 0
@@ -239,6 +246,7 @@ export default {
         })
         .then(data => {
             this.item = data.data;
+            console.log(this.item)
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/user/token/",
@@ -282,6 +290,7 @@ export default {
     border-radius: 5px;
     margin: 10px;
 }
+
 
 
 </style>
