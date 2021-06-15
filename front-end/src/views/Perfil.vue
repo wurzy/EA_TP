@@ -4,7 +4,7 @@
     <v-container style="max-width: 85%" class="perfil">
         <v-card class="pa-6 user" color="grey lighten-5" outlined> 
             <v-row>
-              <v-col sm="3" class="pa-6">
+              <v-col v-if="this.visivel" sm="3" class="pa-6">
                 
                   <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
                   <v-avatar @click="$refs.fileInput.click()" size="150">
@@ -13,10 +13,19 @@
                   </v-avatar>
                 
               </v-col>
+              <v-col v-else sm="3" class="pa-6">
+
+                  <v-avatar size="150">
+                      <v-img :src="image"></v-img>
+                  </v-avatar>
+                
+              </v-col>
               <v-col cols="6" sm="6" align="start">
                   <span style="font-size: 30px; color: #53a6bf;"> {{user.name}} <br/> </span>
                   <span style="font-size: 22px;"> <b>Estatuto: </b> {{user.role.type}} <br/> </span>
-                  <span style="font-size: 22px;" > <b>Filiação: </b> {{user.role.affiliation}} <br/> </span>
+                  <span style="font-size: 22px;"> <b>Filiação: </b> {{user.role.affiliation}} <br/> </span>
+                  <span style="font-size: 22px;"> <b>Tipo: </b> {{user.role.type}} <br/> </span>
+                  <span style="font-size: 22px;"> <b>Descrição: </b> {{user.description}} <br/> </span>
                   <span style="font-size: 22px;"> <i> Registado desde {{user.registerDate.split("T")[0]}} </i></span>
               </v-col>
               
@@ -199,7 +208,8 @@ export default {
           headers: { "Authorization" : token},
         })
         .then( () => {
-          this.$router.go()
+          this.image = URL.createObjectURL(this.imageTemp)
+          this.imageTemp = null
         })
         .catch(err => {
           console.log(err)

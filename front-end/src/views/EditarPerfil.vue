@@ -119,17 +119,15 @@ export default {
                 method: "post",
                 url: "http://localhost:8081/api/user/update/"+this.user.idUser+"/",
                 data: usr,
-                headers: {'Content-Type': 'application/json', "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
+                headers: { "Authorization" : localStorage.getItem('jwt')},
             })
-            .then(data => {
-                    alert('Perfil editado com sucesso!')
+            .then(() => {
                     this.cancelar();
-                    console.log(data.data)
                     this.$router.go()
                 })
             .catch(err => {
                     console.log(err)
-                    alert('Não foi possível editar o perfil recurso')
+                    alert('Não foi possível editar o perfil')
                     this.cancelar();
                 })
         },
