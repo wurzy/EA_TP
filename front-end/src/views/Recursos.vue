@@ -85,6 +85,9 @@ export default {
         handleClick(value) {
           this.$router.push('/recursos/' + value.idResource)      
         },
+        sorted(lista) {
+            return lista.sort((a,b) => (a.lastModifiedAt < b.lastModifiedAt) ? 1 : ((b.lastModifiedAt < a.lastModifiedAt) ? -1 : 0))
+        },
         download() {
             if (this.selected.length>0) {
             var ids = []
@@ -142,8 +145,9 @@ export default {
                 url: "http://localhost:8081/api/resource/",
             })
             .then(data => {
-                this.resources = data.data;
-                this.resourcesInitial = data.data;
+                var recursos = this.sorted(data.data)
+                this.resources = recursos;
+                this.resourcesInitial = recursos;
                 this.loading=false
             })
             .catch(err => {

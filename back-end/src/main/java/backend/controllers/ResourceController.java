@@ -157,7 +157,7 @@ public class ResourceController {
         return null;
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public ResourceJSON deleteResource(@RequestHeader(value="Authorization") String token, @PathVariable int id){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null) return null;

@@ -96,7 +96,7 @@ export default {
             url: "http://localhost:8081/api/post/",
         })
         .then(data => {
-            this.pubs = data.data
+            this.pubs = this.sorted(data.data)
             this.list = this.pubs.slice(0,this.limite)
             axios({
             method: "get",
@@ -128,7 +128,10 @@ export default {
         },
         handleClick2(value) {
           this.$router.push('/recursos/' + value)      
-        }
+        },
+        sorted(lista) {
+            return lista.sort((a,b) => (a.createdAt < b.createdAt) ? 1 : ((b.createdAt < a.createdAt) ? -1 : 0))
+        },
     }
 }
 
