@@ -3,48 +3,46 @@
     
     <v-container style="max-width: 85%" class="perfil">
         <v-card class="pa-6 user" color="grey lighten-5" outlined> 
-                <v-row>
-                  <v-col sm="3" class="pa-6">
-                    
-                      <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
-                      <v-avatar @click="$refs.fileInput.click()" size="150">
-                          <v-img v-if="imageTemp" :src="image" @mouseover="image=imageHover" @mouseleave="image=url"></v-img>
-                          <v-img v-else :src="image" @mouseover="image=imageHover" @mouseleave="image=imageOri"></v-img>
-                      </v-avatar>
-                    
-                  </v-col>
+            <v-row>
+              <v-col sm="3" class="pa-6">
+                
+                  <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
+                  <v-avatar @click="$refs.fileInput.click()" size="150">
+                      <v-img v-if="imageTemp" :src="image" @mouseover="image=imageHover" @mouseleave="image=url"></v-img>
+                      <v-img v-else :src="image" @mouseover="image=imageHover" @mouseleave="image=imageOri"></v-img>
+                  </v-avatar>
+                
+              </v-col>
+              <v-col cols="6" sm="6" align="start">
+                  <span style="font-size: 30px; color: #53a6bf;"> {{user.name}} <br/> </span>
+                  <span style="font-size: 22px;"> <b>Estatuto: </b> {{user.role.type}} <br/> </span>
+                  <span style="font-size: 22px;" > <b>Filiação: </b> {{user.role.affiliation}} <br/> </span>
+                  <span style="font-size: 22px;"> <i> Registado desde {{user.registerDate.split("T")[0]}} </i></span>
+              </v-col>
+              
+              <v-col v-if="this.visivel" align="right">
+                <EditPerfil :user="this.user"/>
+              </v-col>
+            </v-row>
 
-                  <v-col cols="1" sm="4" align="start">
-                      <span style="font-size: 30px; color: #53a6bf;"> {{user.name}} <br/> </span>
-                      <span style="font-size: 22px;"> <b>Estatuto: </b> {{user.role.type}} <br/> </span>
-                      <span style="font-size: 22px;" > <b>Filiação: </b> {{user.role.affiliation}} <br/> </span>
-                      <span style="font-size: 22px;"> <i> Registado desde {{user.registerDate.split("T")[0]}} </i></span>
-                  </v-col>
-                  
-                  <v-col v-if="this.visivel" align="right">
-                    <EditPerfil :user="this.user"/>
-                    
-                  </v-col>
- 
-                </v-row>
-                <v-row>
-                  <v-col cols="2" class="pa-0" align="center">
-                    <v-btn small v-if="imageTemp" @click="mudarFoto" color='#53a6bf'> Guardar </v-btn>
-                  </v-col>
-                </v-row>
-               
-            
+            <v-row>
+              <v-col cols="2" class="pa-0" align="center">
+                <v-btn small v-if="imageTemp" @click="mudarFoto" color='#53a6bf'> Guardar </v-btn>
+              </v-col>
+            </v-row>
+
         </v-card> 
-        <v-card
-            class="ma-2"
-            max-width="700"
-        >
-        </v-card>
+
         <v-col v-for="n in list" :key="n.data">
+
             <v-card light flat >
-              <v-container >
-                <v-layout align-center>
-                  <strong class="display-1 font-weight-regular mr-4">{{n.date.split("-")[2]}}</strong>
+              <v-container @click="openAndClose(n)">
+                
+                <v-layout align-center>                 
+                  <strong class="display-1 font-weight-regular mr-4">
+                    <v-icon>mdi-menu-down</v-icon>
+                    {{n.date.split("-")[2]}}
+                  </strong>
                   <v-layout column justify-end>
                     <div class="title font-weight-light">{{dataToDia(n.date)}}</div>
                     <div class="text-uppercase font-weight-light">{{dataToMes(n.date)}}</div>
@@ -52,8 +50,9 @@
                  </v-layout>
                </v-container>
             </v-card>
-            <v-card-text class="py-0">
-              <v-col v-for="x in n.timeline" :key="x.hora" cols="12" sm="5">
+
+            <v-card-text v-if="isOpen(n)" class="py-0">
+              <v-col v-for="x in n.timeline" :key="x.hora" cols="12" sm="6">
                 <v-timeline align-top dense>
                   <v-timeline-item color="teal lighten-2" small>
                         <v-layout pt-3>
@@ -61,17 +60,14 @@
                             <strong style="font-size: 20px;">{{x.time.slice(0,5)}}</strong>
                           </v-flex>
                           <v-flex>
-                            <span style="font-size: 20px;">{{x.state}}</span>
-                            
+                            <span style="font-size: 20px;">{{getText(x.state)}}</span>
                           </v-flex>
                         </v-layout>
                     </v-timeline-item>
                 </v-timeline>
-
-              </v-col>
-
-                  
+              </v-col>            
             </v-card-text>
+
         </v-col>    
         
     </v-container>
@@ -95,6 +91,7 @@ export default {
     name: 'perfil',
     data() {
         return { 
+            open: [],
             list:[],
             user: '',
             id:'',
@@ -146,6 +143,7 @@ export default {
         url: "http://localhost:8081/api/user/timeline/"+this.$route.params.id+"/",})
         .then(res => {
           this.list = res.data
+          this.list.sort((a,b) => (a.date < b.date) ? 1 : ((b.date < a.date) ? -1 : 0))
         })
         .catch(err => {
           console.log(err)
@@ -171,6 +169,24 @@ export default {
         this.imageTemp = event.target.files[0]
         this.url = URL.createObjectURL(this.imageTemp)
         this.image = this.url
+      },
+      getText(texto) {
+        if (texto=="Novo Post") return "Fez uma nova publicação"
+        if (texto=="Update Post") return "Atualizou uma publicação"
+        if (texto=="Novo Recurso") return "Adicionou um novo recurso"
+        if (texto=="Update Recurso") return "Atualizou um recurso"
+      },
+      openAndClose(n) {
+        if (this.isOpen(n)) {
+          var index = this.open.map(function(item) { return item; }).indexOf(n)
+          this.open.splice(index, 1) 
+        } 
+        else {
+          this.open.push(n)
+        } 
+      },
+      isOpen(n) {
+        return this.open.includes(n)
       },
       mudarFoto(){
         const fd =  new FormData();
