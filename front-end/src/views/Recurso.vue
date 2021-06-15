@@ -18,6 +18,9 @@
         <v-container v-if="item">
             
             <h1> {{item.title}}</h1>
+            <v-col align="center">
+                <a style="color:black;" v-scroll-to="'#pubs'" href="#">Ver Publicações</a>
+            </v-col>
             <v-row v-if="idUser==item.idUser.idUser">
                 <v-col offset="10">
                     <EditRec :recurso="item"/>
@@ -112,7 +115,7 @@
                 </v-col>
             </v-row>
 
-            <v-container style="margin-top:90px;max-width: 85%">
+            <v-container id="pubs" style="margin-top:90px;max-width: 85%">
               <v-row no-gutters >
                 <v-col v-for="n in item.posts" :key="n.name" cols="12" sm="4">
                   <v-card class="pa-6 user" color="grey lighten-2" outlined @click="handleClick(n.idPost)" min-width="100px">
@@ -246,6 +249,8 @@ export default {
         })
         .then(data => {
             this.item = data.data;
+            var posts = this.item.posts.sort((a,b) => (a.createdAt < b.createdAt) ? 1 : ((b.createdAt < a.createdAt) ? -1 : 0))
+            this.item.posts = posts
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/user/token/",

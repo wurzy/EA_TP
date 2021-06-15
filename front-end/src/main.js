@@ -10,7 +10,9 @@ Vue.config.productionTip = false;
 
 const moment = require('moment')
 require('moment/locale/pt')
+var VueScrollTo = require('vue-scrollto');
  
+Vue.use(VueScrollTo)
 Vue.use(require('vue-moment'), {
     moment
 })
