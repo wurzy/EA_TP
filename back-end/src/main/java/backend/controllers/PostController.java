@@ -33,10 +33,10 @@ public class PostController {
     }
 
     @PostMapping("/update/{id}")
-    public PostJSON updatePost(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestParam String title, @RequestParam String body, @RequestParam java.sql.Timestamp createdAt, @RequestParam int idResource){
+    public PostJSON updatePost(@RequestHeader(value="Authorization") String token, @PathVariable int id, @RequestParam String title, @RequestParam String body){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null) return null;
-        return pb.updatePost(id,new CreatePostJSON(title,body,createdAt,(int) cl.get("idUser"),idResource));
+        return pb.updatePost(id,new CreatePostJSON(title,body,null,(int) cl.get("idUser"),0));
     }
 
     @PostMapping("/comment/update/{id}")

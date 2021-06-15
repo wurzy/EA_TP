@@ -61,8 +61,6 @@ public class PostBean {
             if(p.getIdUser().getIdUser() != cpj.getIdUser()) return null;
             p.setTitle(cpj.getTitle());
             p.setBody(cpj.getBody());
-            p.setCreatedAt(cpj.getCreatedAt());
-            p.setIdResource(ResourcesDAO.getResourcesByORMID(cpj.getIdResource()));
             p.setIdUser(UsersDAO.getUsersByORMID(cpj.getIdUser()));
             PostsDAO.save(p);
             return new PostJSON(p, new CommentJSON[0]);
