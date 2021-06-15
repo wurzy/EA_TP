@@ -94,13 +94,15 @@ export default {
         return { 
             list:[],
             user: '',
+            id:'',
             hover: false,
             image: null,
             imageTemp: null,
             imageOri: null,
             imageDefault: "https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png",
             imageHover: "https://i.ibb.co/rf1BNkr/unknown.png",
-            visivel: false
+            visivel: false,
+            token: localStorage.getItem('jwt')
 
          
         }
@@ -109,8 +111,22 @@ export default {
       EditPerfil
     },
     created() {
-        if(this.$route.params.id==1){this.visivel=true}
-        else{this.visivel=false}
+        axios({
+        method: "post",
+        url: "http://localhost:8081/api/user/token/",
+        data: this.token,
+        })
+        .then(data => {
+            this.id = data.data.idUser
+            if(this.$route.params.id==this.id){this.visivel=true}
+            else{this.visivel=false}
+
+        })
+        .catch(err => {
+            console.log(err)
+        })
+
+
         axios({
             method: "get",
             url: "http://localhost:8081/api/user/"+this.$route.params.id+"/",
