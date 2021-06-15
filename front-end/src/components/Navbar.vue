@@ -12,22 +12,18 @@
           ></v-img>
             <v-toolbar-items>
              <v-btn class="navbar-button">
-                <!--<router-link class="hyperlink" to="/"><b>Home</b></router-link>-->
                 <span class="hyperlink" @click="goToLink('/')"><b>Home</b></span>
              </v-btn>
              <v-btn class="navbar-button">
-                <!--<router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>-->
                 <span class="hyperlink" @click="goToLink('/recursos-search')"><b>Recursos</b></span>
              </v-btn>
              <v-btn class="navbar-button">
-                <!--<router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>-->
                 <span class="hyperlink" @click="goToLink('/utilizadores')"><b>Utilizadores</b></span>
              </v-btn>
             </v-toolbar-items>
             <v-spacer></v-spacer>
             <v-toolbar-items>
              <v-btn class="navbar-button">
-                <!--<router-link class="hyperlink" :to="link"><b>Perfil</b></router-link>-->
                 <span class="hyperlink" @click="goToLink(link)"><b>Perfil</b></span>
              </v-btn>
              <v-btn class="navbar-button">
@@ -71,7 +67,8 @@ export default {
   methods: {
     handleLogout() {
       localStorage.clear();
-      this.$router.go();
+      this.$router.go()
+      window.location.href = '/'
     },
     goToLink(link) {
       var currentUrl = window.location.pathname;
@@ -120,18 +117,20 @@ export default {
     }
   },
   created() {
-    axios({
-        method: "post",
-        url: "http://localhost:8081/api/user/token/",
-        data: this.token,
-    })
-    .then(data => {
-        this.idUser = data.data.idUser
-        this.link = this.link + this.idUser
-    })
-    .catch(err => {
-        console.log(err)
-    })
+    if (this.token) {
+      axios({
+          method: "post",
+          url: "http://localhost:8081/api/user/token/",
+          data: this.token,
+      })
+      .then(data => {
+          this.idUser = data.data.idUser
+          this.link = this.link + this.idUser
+      })
+      .catch(err => {
+          console.log(err)
+      })
+    }
   }
 };
 </script>

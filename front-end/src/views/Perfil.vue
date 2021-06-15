@@ -4,15 +4,14 @@
     <v-container style="max-width: 85%" class="perfil">
         <v-card class="pa-6 user" color="grey lighten-5" outlined> 
                 <v-row>
-                  <v-col cols="1" sm="3">
+                  <v-col sm="3" class="pa-6">
                     
                       <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
                       <v-avatar @click="$refs.fileInput.click()" size="150">
-                          <v-img v-if="this.imageOri" :src="this.image" @mouseover="image=imageHover" @mouseleave="image=imageOri"></v-img>
-                          <v-img v-else :src="this.image" @mouseover="imageAux=imageHover" @mouseleave="image=imageDefault"></v-img>
+                          <v-img v-if="imageTemp" :src="image" @mouseover="image=imageHover" @mouseleave="image=url"></v-img>
+                          <v-img v-else :src="image" @mouseover="image=imageHover" @mouseleave="image=imageOri"></v-img>
                       </v-avatar>
-                  
-                    <v-btn  small v-if="this.imageTemp" @click="mudarFoto" color='#53a6bf'> Guardar </v-btn>
+                    
                   </v-col>
 
                   <v-col cols="1" sm="4" align="start">
@@ -27,7 +26,11 @@
                     
                   </v-col>
  
-                  
+                </v-row>
+                <v-row>
+                  <v-col cols="2" class="pa-0" align="center">
+                    <v-btn small v-if="imageTemp" @click="mudarFoto" color='#53a6bf'> Guardar </v-btn>
+                  </v-col>
                 </v-row>
                
             
@@ -95,16 +98,14 @@ export default {
             list:[],
             user: '',
             id:'',
+            url: '',
             hover: false,
             image: null,
             imageTemp: null,
             imageOri: null,
-            imageDefault: "https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png",
             imageHover: "https://i.ibb.co/rf1BNkr/unknown.png",
             visivel: false,
             token: localStorage.getItem('jwt')
-
-         
         }
     },
     components: {
@@ -130,22 +131,11 @@ export default {
         axios({
             method: "get",
             url: "http://localhost:8081/api/user/"+this.$route.params.id+"/",
-            headers: { "Content-Type": "multipart/form-data" },
         })
         .then(data => {
             this.user = data.data;
-            console.log(this.user)
-            axios({
-            method: "get",
-            url: "http://localhost:8081/api/user/image/thumbnail/"+this.user.picture+"/",
-            responseType: 'blob',})
-            .then(res => {
-              this.imageOri = URL.createObjectURL(res.data)
-              this.image =  URL.createObjectURL(res.data)
-            })
-            .catch(err => {
-              console.log(err)
-            })
+            this.imageOri = "http://localhost:8081/api/user/image/thumbnail/"+this.user.picture
+            this.image = this.imageOri
         })
         .catch(err => {
             console.log(err)
@@ -179,31 +169,27 @@ export default {
       },
       onFileSelected(event){
         this.imageTemp = event.target.files[0]
+        this.url = URL.createObjectURL(this.imageTemp)
+        this.image = this.url
       },
       mudarFoto(){
         const fd =  new FormData();
         fd.append('image', this.imageTemp, this.imageTemp.name)
+        var token = localStorage.getItem('jwt')
         axios({
-                method: "post",
-                url: "http://localhost:8081/api/user/image/1/",
-                data: fd,
-                headers: { "Content-Type": "multipart/form-data" , "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
-            })
-            .then( res => {
-                  this.imageOri = URL.createObjectURL(this.imageTemp)
-                  this.image = URL.createObjectURL(this.imageTemp)
-                  alert('Recurso adicionado com sucesso!',res)
-                  
-
-                })
-            .catch(err => {
-                    console.log(err)
-                    alert('Não foi possível adicionar novo recurso')
-                   
-                })
+          method: "post",
+          url: "http://localhost:8081/api/user/image/"+this.$route.params.id,
+          data: fd,
+          headers: { "Authorization" : token},
+        })
+        .then( () => {
+          this.$router.go()
+        })
+        .catch(err => {
+          console.log(err)
+          alert('Não foi possível alterar fotografia')  
+        })
       }
-    
-    
     }
 }
 

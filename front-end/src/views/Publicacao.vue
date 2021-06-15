@@ -114,7 +114,7 @@ export default {
         },
         addComment() {
             var json = {};
-            json['idUser'] = 1
+            json['idUser'] = this.idUser
             json['body'] = this.com
             json['createdAt'] = new Date().toISOString()
             axios({
@@ -124,7 +124,6 @@ export default {
                 headers: { "Authorization" : this.token},
             })
             .then(() => {
-                    alert('Comentário efetuado com sucesso!')
                     this.$router.go()
                 })
             .catch(err => {
@@ -145,6 +144,7 @@ export default {
             })
             .catch(err => {
                 console.log(err)
+                alert('Não foi possível remover a publicação')
             })}
         },
         editPost(){
@@ -152,7 +152,6 @@ export default {
             var json = {}
             json['title'] = this.newTitle
             json['body'] = this.newBody
-            console.log(json)
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/post/update/"+id,
@@ -164,6 +163,7 @@ export default {
             })
             .catch(err => {
                 console.log(err)
+                alert('Não foi possível editar a publicação')
             })
         },
         removeComentario(id){
@@ -178,6 +178,7 @@ export default {
                })
                .catch(err => {
                    console.log(err)
+                   alert('Não foi possível remover o comentário')
                })
            }
         },
@@ -196,6 +197,7 @@ export default {
             })
             .catch(err => {
                 console.log(err)
+                alert('Não foi possível editar o comentário')
             })
         }
     },

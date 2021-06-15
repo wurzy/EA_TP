@@ -50,7 +50,7 @@ export default {
             url: "http://localhost:8081/api/resource/types/",
         })
         .then(data => {
-            this.types = data.data.types
+            this.types = data.data.types.sort((a,b) => (a.toLowerCase() < b.toLowerCase()) ? -1 : ((b.toLowerCase() < a.toLowerCase()) ? 1 : 0))
             this.loading=false
         })
         .catch(err => {

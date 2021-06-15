@@ -84,7 +84,6 @@ export default {
                 headers: { "Content-Type": "multipart/form-data" , "Authorization" : token},
             })
             .then(data => {
-                    alert('Publicação efetuada com sucesso!')
                     this.cancelar();
                     this.$router.push('/publicacao/' + data.data.idPost)
                 })

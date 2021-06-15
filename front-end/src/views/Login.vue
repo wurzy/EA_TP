@@ -114,6 +114,7 @@
                                     type="text" 
                                     v-model="tipo" 
                                     :rules="[rules.required]"
+                                    placeholder="(ex:professor,aluno,empregado,etc)"
                                     label="Tipo">
                                     </v-text-field>
                                 </v-col>
@@ -122,6 +123,7 @@
                                     type="text" 
                                     v-model="affiliation" 
                                     :rules="[rules.required]"
+                                    placeholder="(ex:empresa,escola,etc)"
                                     label="Afiliação">
                                     </v-text-field>
                                 </v-col>
@@ -194,14 +196,16 @@ import axios from 'axios'
                 json['password'] = this.password
                 axios.post("http://localhost:8081/api/user/login/", json)
                     .then(data => {
+                        console.log(data)
                         localStorage.setItem('jwt',data.data)
                         this.$router.go()
                         this.dialog = false
                         this.loading = false
                     })
-                    .catch(err => {
+                    .catch(() => {
                         this.alert = true
-                        this.message = err.response.data.message
+                        this.message = 'Email ou Password incorretos!'
+                        this.loading = false
                     })
             },
             register() {
@@ -218,9 +222,10 @@ import axios from 'axios'
                     .then( () => {
                         this.login()
                     })
-                    .catch(err => {
+                    .catch(() => {
                         this.alert = true
-                        this.message = err.response.data.message
+                        this.message = 'Email '+this.email+' já se encontra registado!'
+                        this.loading = false
                     })       
             },            
         }
@@ -235,7 +240,8 @@ import axios from 'axios'
 #login {
     margin: auto;
 }
-#login .alert {
+
+.alert {
     text-align: center;
     color: red;
 }
