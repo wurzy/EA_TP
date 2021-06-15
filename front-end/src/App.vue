@@ -4,8 +4,14 @@
     <div v-if="token">
       <router-view></router-view>
     </div>
-    <div v-else>
-      <span> FAZ LOGIN BURRO </span>
+    <div class="frontpage" v-else>
+      <span class="bigtext"> A plafatorma ideal para encontrares todos os recursos que precisas e receber feedbacks nos teus próprios projetos.</span>
+      <v-img
+          class="logo"
+          max-height="300"
+          max-width="300"
+          src="./assets/frontpage.png"
+      ></v-img>
     </div>
   </v-app>
 </template>
@@ -47,9 +53,24 @@ body {
 
 html { overflow-y: hidden }
 
-
 .dropdown {
   overflow: hidden;
+}
+
+.bigtext{
+  font-family: "Arial Black", "Arial Bold", Gadget, sans-serif;
+  width: 700px;
+  font-size: 25px;
+  margin: 0px 0px 40px;
+  text-align: center;
+  color: #575d65;
+
+}
+.frontpage{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
 }
 
 </style>
