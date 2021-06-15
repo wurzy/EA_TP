@@ -4,7 +4,7 @@
             <h1 class="title">Tipo de Recursos</h1>
             <br/>
             <v-col align="center">
-                <a style="color:black;" href="http://localhost:8080/recursos/">Ver Todos</a>
+                <a style="color:black;" href="http://localhost:8080/recursos/type/all">Ver Todos</a>
             </v-col>
             <v-col v-for="n in ordered" :key="n.idRecurso" cols="12" sm="12">
                 <span class="letter" v-if="n.length == 1"> {{ n.toUpperCase() }} <hr> </span>

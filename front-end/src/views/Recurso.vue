@@ -209,9 +209,11 @@ export default {
         }
     },
     created() {
+        var token = localStorage.getItem('jwt')
         axios({
             method: "get",
             url: "http://localhost:8081/api/resource/"+this.$route.params.id,
+            headers: { "Authorization" : token},
         })
         .then(data => {
             this.item = data.data;

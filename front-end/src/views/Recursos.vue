@@ -135,18 +135,35 @@ export default {
     },
     created() {
         this.loading=true
-        axios({
-            method: "get",
-            url: "http://localhost:8081/api/resource/",
-        })
-        .then(data => {
-            this.resources = data.data;
-            this.resourcesInitial = data.data;
-            this.loading=false
-        })
-        .catch(err => {
-            console.log(err)
-        })
+        var type = this.$route.params.type
+        if (type=="all") {
+            axios({
+                method: "get",
+                url: "http://localhost:8081/api/resource/",
+            })
+            .then(data => {
+                this.resources = data.data;
+                this.resourcesInitial = data.data;
+                this.loading=false
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
+        else {
+            axios({
+                method: "get",
+                url: "http://localhost:8081/api/resource/type/" +  type,
+            })
+            .then(data => {
+                this.resources = data.data;
+                this.resourcesInitial = data.data;
+                this.loading=false
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        }
     }
 }
 

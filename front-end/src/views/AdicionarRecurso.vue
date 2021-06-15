@@ -48,15 +48,14 @@
                             ></v-text-field>
                         </v-col>
 
-                        <v-col class="pa-2">
-                            <v-text-field 
-                            hide-details
-                            dense
-                            type="text" 
-                            v-model="tipo" 
-                            label="Tipo"
-                            outlined
-                            ></v-text-field>
+                        <v-col class="pa-2" style="margin-bottom:-25px">
+                            <v-autocomplete
+                              v-model="tipo"
+                              :items="types"
+                              outlined
+                              dense
+                              label="Seleciona o tipo"
+                            ></v-autocomplete>
                         </v-col>
 
                         <v-col class="pa-2">
@@ -173,6 +172,7 @@ export default {
           urls:[],
           hover: false,
           show:false,
+          types:[],
           visibilidade:true,
           titulo:'',
           descricao:'',
@@ -263,6 +263,19 @@ export default {
             var index = this.files.map(function(item) { return item.file.lastModified; }).indexOf(value);
             this.files.splice(index, 1);
         }
+    },
+    created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/resource/types/",
+        })
+        .then(data => {
+            this.types = data.data.types
+            this.loading=false
+        })
+        .catch(err => {
+            console.log(err)
+        })
     }
 }
 
