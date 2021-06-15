@@ -41,25 +41,25 @@
             <v-card light flat >
               <v-container >
                 <v-layout align-center>
-                  <strong class="display-1 font-weight-regular mr-4">{{n.data.split("-")[2]}}</strong>
+                  <strong class="display-1 font-weight-regular mr-4">{{n.date.split("-")[2]}}</strong>
                   <v-layout column justify-end>
-                    <div class="title font-weight-light">{{dataToDia(n.data)}}</div>
-                    <div class="text-uppercase font-weight-light">{{dataToMes(n.data)}}</div>
+                    <div class="title font-weight-light">{{dataToDia(n.date)}}</div>
+                    <div class="text-uppercase font-weight-light">{{dataToMes(n.date)}}</div>
                   </v-layout>
                  </v-layout>
                </v-container>
             </v-card>
             <v-card-text class="py-0">
-              <v-col v-for="x in n.lista" :key="x.hora" cols="12" sm="5">
+              <v-col v-for="x in n.timeline" :key="x.hora" cols="12" sm="5">
                 <v-timeline align-top dense>
                   <v-timeline-item color="teal lighten-2" small>
                         <v-layout pt-3>
                           <v-flex xs3>
-                            <strong style="font-size: 20px;">{{x.hora}}</strong>
+                            <strong style="font-size: 20px;">{{x.time.slice(0,5)}}</strong>
                           </v-flex>
                           <v-flex>
-                            <span style="font-size: 20px;">{{x.descri}}</span>
-                            <div class="caption" >Blah blah</div>
+                            <span style="font-size: 20px;">{{x.state}}</span>
+                            
                           </v-flex>
                         </v-layout>
                     </v-timeline-item>
@@ -118,43 +118,7 @@ export default {
         })
         .then(data => {
             this.user = data.data;
-            this.list = 
-        [{
-        "data":"2021-02-10",
-        "lista" : [
-            {
-            "hora":"16:10",
-            "descri":"Carreguei um novo Recurso: x"
-            }
-            ]
-        },
-        {
-        "data":"2021-02-11",
-        "lista" : [
-            {
-            "hora":"16:11",
-            "descri":"Carreguei um novo Recurso: x"
-            },
-            {
-            "hora":"18:16",
-            "descri":"Criei uma nova Publicação: y"
-            }
-            ]
-        },
-        {
-        "data":"2021-02-12",
-        "lista" : [
-            {
-            "hora":"16:15",
-            "descri":"Carreguei um novo Recurso: x"
-            },
-            {
-            "hora":"18:17",
-            "descri":"Criei uma nova Publicação: y"
-            }
-            ]
-        }]
-          console.log(this.user)
+            console.log(this.user)
             axios({
             method: "get",
             url: "http://localhost:8081/api/user/image/thumbnail/"+this.user.picture+"/",
@@ -169,6 +133,16 @@ export default {
         })
         .catch(err => {
             console.log(err)
+        })
+
+        axios({
+        method: "get",
+        url: "http://localhost:8081/api/user/timeline/"+this.$route.params.id+"/",})
+        .then(res => {
+          this.list = res.data
+        })
+        .catch(err => {
+          console.log(err)
         })
         
         
