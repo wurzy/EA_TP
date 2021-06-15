@@ -5,10 +5,14 @@
         <v-card class="pa-6 user" color="grey lighten-5" outlined> 
                 <v-row>
                   <v-col cols="1" sm="3">
-                      <v-avatar size="150">
-                          <v-img v-if="this.imageOri" :src="this.imageOri"></v-img>
-                          <v-img v-else src="https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png"></v-img>
+                    
+                      <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
+                      <v-avatar @click="$refs.fileInput.click()" size="150">
+                          <v-img v-if="this.imageOri" :src="this.image" @mouseover="image=imageHover" @mouseleave="image=imageOri"></v-img>
+                          <v-img v-else :src="this.image" @mouseover="imageAux=imageHover" @mouseleave="image=imageDefault"></v-img>
                       </v-avatar>
+                  
+                    <v-btn  small v-if="this.imageTemp" @click="mudarFoto" color='#53a6bf'> Guardar </v-btn>
                   </v-col>
 
                   <v-col cols="1" sm="4" align="start">
@@ -19,15 +23,10 @@
                   </v-col>
                   
                   <v-col v-if="this.visivel" align="right">
-                    <v-btn @click="editarPerfil()" color='#53a6bf'> Editar Perfil </v-btn>
-                    <input style="display: none" type="file" @change="onFileSelected" ref="fileInput">
-                    <v-btn @click="$refs.fileInput.click()" color='#53a6bf'> Escolher Foto </v-btn>
-                   
-                    <v-btn v-if="this.imageTemp" @click="mudarFoto" color='#53a6bf'> Mudar Foto </v-btn>
-                   
+                    <EditPerfil :user="this.user"/>
+                    
                   </v-col>
-                
-                 
+ 
                   
                 </v-row>
                
@@ -87,6 +86,7 @@
 
 <script>
 import axios from 'axios'
+import EditPerfil from "@/views/EditarPerfil.vue"
 
 export default {
     name: 'perfil',
@@ -94,13 +94,19 @@ export default {
         return { 
             list:[],
             user: '',
+            hover: false,
+            image: null,
             imageTemp: null,
             imageOri: null,
+            imageDefault: "https://digimedia.web.ua.pt/wp-content/uploads/2017/05/default-user-image.png",
+            imageHover: "https://i.ibb.co/rf1BNkr/unknown.png",
             visivel: false
+
          
         }
     },
     components: {
+      EditPerfil
     },
     created() {
         if(this.$route.params.id==1){this.visivel=true}
@@ -155,7 +161,7 @@ export default {
             responseType: 'blob',})
             .then(res => {
               this.imageOri = URL.createObjectURL(res.data)
-              console.log(data)
+              this.image =  URL.createObjectURL(res.data)
             })
             .catch(err => {
               console.log(err)
@@ -169,7 +175,6 @@ export default {
     },
     methods: {
       dataToDia(data) {
-         console.log(data)
        
         let date = new Date(data.split("-")[0],data.split("-")[1], data.split("-")[2]); // 2020-06-21
         let day = date.toLocaleString('pt-pt', { weekday: 'long' });
@@ -177,7 +182,6 @@ export default {
         return day.charAt(0).toUpperCase() + day.substring(1) 
       },
       dataToMes(data) {
-         console.log(data)
        
         let date = new Date(data.split("-")[0],data.split("-")[1], data.split("-")[2]); // 2020-06-21
         let Month = date.toLocaleString('pt-pt', { month: 'long' });
@@ -197,8 +201,10 @@ export default {
             })
             .then( res => {
                   this.imageOri = URL.createObjectURL(this.imageTemp)
-                    alert('Recurso adicionado com sucesso!',res)
+                  this.image = URL.createObjectURL(this.imageTemp)
+                  alert('Recurso adicionado com sucesso!',res)
                   
+
                 })
             .catch(err => {
                     console.log(err)
@@ -223,7 +229,9 @@ export default {
     border-radius: 5px;
     margin: 10px;
 }
-
+.active {
+  background: grey;
+}
 .perfil {
     background-color: #a9a9a94a;
     border-radius: 5px;
