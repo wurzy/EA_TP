@@ -12,19 +12,23 @@
           ></v-img>
             <v-toolbar-items>
              <v-btn class="navbar-button">
-                <router-link class="hyperlink" to="/"><b>Home</b></router-link>
+                <!--<router-link class="hyperlink" to="/"><b>Home</b></router-link>-->
+                <span class="hyperlink" @click="goToLink('/')"><b>Home</b></span>
              </v-btn>
              <v-btn class="navbar-button">
-                <router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>
+                <!--<router-link class="hyperlink" to="/recursos-search"><b>Recursos</b></router-link>-->
+                <span class="hyperlink" @click="goToLink('/recursos-search')"><b>Recursos</b></span>
              </v-btn>
              <v-btn class="navbar-button">
-                <router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>
+                <!--<router-link class="hyperlink" to="/utilizadores"><b>Utilizadores</b></router-link>-->
+                <span class="hyperlink" @click="goToLink('/utilizadores')"><b>Utilizadores</b></span>
              </v-btn>
             </v-toolbar-items>
             <v-spacer></v-spacer>
             <v-toolbar-items>
              <v-btn class="navbar-button">
-                <router-link class="hyperlink" to="/perfil"><b>Perfil</b></router-link>
+                <!--<router-link class="hyperlink" :to="link"><b>Perfil</b></router-link>-->
+                <span class="hyperlink" @click="goToLink(link)"><b>Perfil</b></span>
              </v-btn>
              <v-btn class="navbar-button">
                 <span @click="handleLogout()"> Logout </span>
@@ -57,7 +61,7 @@
 
 <script>
 import Login from "@/views/Login.vue";
-
+import axios from 'axios'
 
 export default {
   name: "App",
@@ -68,10 +72,15 @@ export default {
     handleLogout() {
       localStorage.clear();
       this.$router.go();
+    },
+    goToLink(link) {
+      this.$router.push(link)
     }
   },
   data () {
     return {
+      link: '/perfil/',
+      idUser: null,
       dialog: false,
       token: localStorage.getItem('jwt'),
       nav: [
@@ -108,6 +117,22 @@ export default {
         }
       ]
     }
+  },
+  created() {
+    axios({
+        method: "post",
+        url: "http://localhost:8081/api/user/token/",
+        data: this.token,
+    })
+    .then(data => {
+        this.idUser = data.data.idUser
+        console.log(this.idUser)
+        this.link = this.link + this.idUser
+        console.log(this.link)
+    })
+    .catch(err => {
+        console.log(err)
+    })
   }
 };
 </script>

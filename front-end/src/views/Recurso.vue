@@ -246,7 +246,6 @@ export default {
         })
         .then(data => {
             this.item = data.data;
-            console.log(this.item)
             axios({
                 method: "post",
                 url: "http://localhost:8081/api/user/token/",

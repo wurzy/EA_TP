@@ -93,7 +93,7 @@ export default {
             this.all = false
         },
         handleClick(value) {
-            this.$router.push('/utilizadores/' + value)      
+            this.$router.push('/perfil/' + value)      
         },
         filtrar(obj) {
             var name = obj.name

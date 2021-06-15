@@ -81,7 +81,7 @@
                                 :items="files"
                                 item-key="name"
                                 class="elevation-1">
-                                <template v-slot:[`item.file.lastModified`]="{ value }" >
+                                <template v-slot:[`item.file.idFile`]="{ value }" >
                                     <v-btn
                                       @click="remove(value)"
                                       color="red"
@@ -153,7 +153,7 @@ export default {
                 { text: 'Nome', align: 'center',sortable: false, value: 'file.name'},
                 { text: 'Tamanho', align: 'center',sortable: false, value: 'file.size' },
                 { text: 'Visualizar', align: 'center',sortable: false, value: 'url' },
-                { text: '', align: 'center', sortable: false, value: 'file.lastModified'}
+                { text: '', align: 'center', sortable: false, value: 'file.idFile'}
             ],
         }
     },
@@ -202,20 +202,23 @@ export default {
             var bodyFormData = new FormData();
             bodyFormData.append('title', this.titulo);
             bodyFormData.append('description', this.descricao);
-            bodyFormData.append('registeredAt', this.data + " 00:00:00");
+            bodyFormData.append('registeredAt', this.recurso.registeredAt.slice(0, 19).replace('T', ' '));
             bodyFormData.append('visibility', this.visibilidade);
             bodyFormData.append('type', this.tipo);
 
-            for (let i = 0; i < this.files.length; i++) {
-              const file = this.files[i].file;
+            for (let i = 0; i < this.filesInput.length; i++) {
+              const file = this.filesInput[i];
               bodyFormData.append('file', file, file.name);
             }
 
+            bodyFormData.append('delete', this.getDelete(this.filesEntry, this.files));
+
+            var token = localStorage.getItem('jwt')
             axios({
                 method: "post",
-                url: "http://localhost:8081/api/resource/",
+                url: "http://localhost:8081/api/resource/update/"+this.recurso.idResource,
                 data: bodyFormData,
-                headers: { "Content-Type": "multipart/form-data" , "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
+                headers: { "Authorization" : token},
             })
             .then(() => {
                     this.cancelar();
@@ -227,8 +230,17 @@ export default {
                     this.cancelar();
                 })
         },
+        getDelete(listaEntrada, listaSaida){
+            var idsEntry = []
+            var idsOut = []
+            listaEntrada.forEach(elem => idsEntry.push(elem.idFile))
+            listaSaida.forEach(elem => {
+                if (elem.file.idFile) idsOut.push(elem.file.idFile)
+                })
+            return idsEntry.filter(n => !idsOut.includes(n))
+        },
         remove(value) {
-            var index = this.files.map(function(item) { return item.file.lastModified; }).indexOf(value);
+            var index = this.files.map(function(item) { return item.file.idFile; }).indexOf(value);
             this.files.splice(index, 1);
         }
     },
@@ -248,6 +260,7 @@ export default {
                 })
                 .then(data => {
                     var f = data.data
+                    f['idFile'] = file.idFile
                     f['name'] = file.name
                     var url = URL.createObjectURL(data.data)
                     var json = {}
