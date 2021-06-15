@@ -1,9 +1,6 @@
 package backend.beans.locals;
 
-import backend.json.AuthenticationJSON;
-import backend.json.RegisterJSON;
-import backend.json.UserJSON;
-import backend.json.UserProfileJSON;
+import backend.json.*;
 
 import javax.ejb.Local;
 
@@ -15,4 +12,5 @@ public interface UserLocal {
     UserJSON changeUserInfo(Integer id, UserProfileJSON upj);
     String login(AuthenticationJSON aj);
     UserJSON register(RegisterJSON rj);
+    TimelineJSON[] getTimeline(int id);
 }

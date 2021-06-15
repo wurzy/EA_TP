@@ -1,19 +1,16 @@
 package backend.beans;
 
 import backend.beans.locals.UserLocal;
-import backend.dao.Roles;
-import backend.dao.RolesDAO;
-import backend.dao.Users;
-import backend.dao.UsersDAO;
-import backend.json.AuthenticationJSON;
-import backend.json.RegisterJSON;
-import backend.json.UserJSON;
-import backend.json.UserProfileJSON;
+import backend.dao.*;
+import backend.json.*;
 import backend.util.JWTUtil;
 import org.springframework.stereotype.Component;
 
 import javax.ejb.Local;
 import javax.ejb.Stateless;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 @Stateless(name = "UserEJB")
 @Local(UserLocal.class)
@@ -112,6 +109,39 @@ public class UserBean {
             return new UserJSON(u);
         }
         catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public TimelineJSON[] getTimeline(int id){
+        try{
+            Updates[] us = UpdatesDAO.listUpdatesByQuery("idUser="+id,"createdAt DESC");
+            HashMap<String, ArrayList<SingleTimeline>> hm = new HashMap<>();
+            for(Updates u : us){
+                String[] datetime = u.getCreatedAt().toString().split(" ");
+                String date = datetime[0];
+                String time = datetime[1].split("[.]")[0];
+                String state = u.getState();
+                if(!hm.containsKey(date)){
+                    hm.put(date,new ArrayList<>());
+                }
+                hm.get(date).add(new SingleTimeline(state,time));
+            }
+            int i = 0;
+            TimelineJSON[] tj = new TimelineJSON[hm.size()];
+            for(Map.Entry<String,ArrayList<SingleTimeline>> entry : hm.entrySet()){
+                ArrayList<SingleTimeline> a = entry.getValue();
+                SingleTimeline[] stl = new SingleTimeline[a.size()];
+                for(int j = 0; j < a.size(); j++){
+                    stl[j] = a.get(j);
+                }
+                tj[i] = new TimelineJSON(entry.getKey(), stl);
+                i++;
+            }
+            return tj;
+        }
+        catch(Exception e){
             e.printStackTrace();
         }
         return null;

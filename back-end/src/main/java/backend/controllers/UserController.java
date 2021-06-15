@@ -2,10 +2,7 @@ package backend.controllers;
 
 import backend.beans.FileSystemBean;
 import backend.beans.UserBean;
-import backend.json.AuthenticationJSON;
-import backend.json.RegisterJSON;
-import backend.json.UserJSON;
-import backend.json.UserProfileJSON;
+import backend.json.*;
 import backend.util.JWTUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
@@ -61,6 +58,11 @@ public class UserController {
         else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Unable to find resource");
         }
+    }
+
+    @GetMapping("/timeline/{id}")
+    public TimelineJSON[] getTimeline(@PathVariable int id){
+        return ub.getTimeline(id);
     }
 
     @PostMapping("/update/{id}")
