@@ -11,9 +11,22 @@
                 <span class="letter" v-if="n.length == 1"> {{ n.toUpperCase() }} <hr> </span>
                 <li style="cursor: pointer;" v-else @click="handleClick(n)"> {{ n }} </li>
             </v-col>-->
-            <v-col v-for="n in types" :key="n" cols="12" sm="12">
-                <li style="cursor: pointer;" @click="handleClick(n)"> {{ n }} </li>
-            </v-col>
+            <v-list rounded>
+             
+              <v-list-item-group
+                color="primary"
+              >
+                <v-list-item v-for="i in types" :key="i">
+                  <v-list-item-icon>
+                    <v-icon>mdi-chevron-right-box</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title style="font-size: 22px" @click="handleClick(i)" v-text="i"></v-list-item-title>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list-item-group>
+            </v-list>
+            
         </v-container>
     </div>
 </template>
