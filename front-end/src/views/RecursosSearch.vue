@@ -6,9 +6,13 @@
             <v-col align="center">
                 <a style="color:black;" href="http://localhost:8080/recursos/type/all">Ver Todos</a>
             </v-col>
+            <!--
             <v-col v-for="n in ordered" :key="n.idRecurso" cols="12" sm="12">
                 <span class="letter" v-if="n.length == 1"> {{ n.toUpperCase() }} <hr> </span>
                 <li style="cursor: pointer;" v-else @click="handleClick(n)"> {{ n }} </li>
+            </v-col>-->
+            <v-col v-for="n in types" :key="n" cols="12" sm="12">
+                <li style="cursor: pointer;" @click="handleClick(n)"> {{ n }} </li>
             </v-col>
         </v-container>
     </div>
@@ -16,22 +20,30 @@
 
 
 <script>
+import axios from 'axios'
+
 export default {
     name: 'RecursosSearch',
     data() {
         return { 
-            abc: 'a',
-            ordered: [],
-            recs1: [
-                {imagemURL: false, titulo: 'Nome do Recurso 1', estado: 'Novo', tipo: 'ATipo1', autor: 'João',  dataPublicacao: '2012-3-3', idRecurso: 1},
-                {imagemURL: false, titulo: 'Nome do Recurso 2', estado: 'Atualizado', tipo: 'ATipo2', autor: 'Ricardo', dataPublicacao: '2012-3-3', idRecurso: 2},
-                {imagemURL: false, titulo: 'Nome do Recurso 3', estado: 'Indisponível', tipo: 'CTipo3', autor: 'Abel', dataPublicacao: '2012-3-3', idRecurso: 3},
-                {imagemURL: false, titulo: 'Nome do Recurso 4', estado: 'Atualizado', tipo: 'BTipo1', autor: 'Joaquim', dataPublicacao: '2012-3-3', idRecurso: 4},
-                {imagemURL: false, titulo: 'Nome do Recurso 4', estado: 'Atualizado', tipo: 'XTipo1', autor: 'Joaquim', dataPublicacao: '2012-3-3', idRecurso: 4}
-            ], 
+            //abc: 'a',
+            //ordered: [],
+            types: []
         }
     },
     created() {
+        axios({
+            method: "get",
+            url: "http://localhost:8081/api/resource/types/",
+        })
+        .then(data => {
+            this.types = data.data.types
+            this.loading=false
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        /*
         var abc = ""
         var ord = this.recs1.sort((a,b) => (a.tipo > b.tipo) ? 1 : ((b.tipo > a.tipo) ? -1 : 0))
         for(var i = 0; i < ord.length; i++) {
@@ -48,11 +60,11 @@ export default {
                 }
             }
         }
-        console.log(this.ordered)    
+        console.log(this.ordered)  */  
     },
     methods: {
         handleClick(value) {
-            this.$router.push('/recursos/' + value)      
+            this.$router.push('/recursos/type/' + value)      
         }
     }
 }

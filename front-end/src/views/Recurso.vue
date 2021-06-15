@@ -16,7 +16,12 @@
         </v-dialog>
 
         <v-container v-if="item">
+            
             <h1> {{item.title}}</h1>
+
+            <v-col v-if="idUser==item.idUser.idUser" align="right">
+                <v-icon color="red" large @click="removeResource()"> mdi-delete </v-icon>
+            </v-col>
 
             <v-row style="padding: 70px 0 0 0">
                 <v-col cols=2 offset=2 class="pa-0" @click="updateSelected('info')">   
@@ -96,7 +101,7 @@
 
             <v-row style="margin-top:40px">
                 <v-col cols="10" align="right">
-                <NewRate :value="item.idResource"/>
+                    <NewRate :value="item.idResource"/>
                 </v-col>
                 <v-col >
                     <NewPub :value="item.idResource"/>
@@ -132,10 +137,12 @@ import NewPub from '@/views/NovaPublicação.vue'
 import NewRate from '@/views/Classificar.vue'
 import FileDownload from 'js-file-download';
 
+
 export default {
     name: 'Recurso',
     data() {
         return { 
+            idUser:null,
             ficheiroAtual: null,
             url:'',
             hover: false,
@@ -158,6 +165,21 @@ export default {
         },
         handleClick(value) {
             this.$router.push('/publicacao/' + value)      
+        },
+        removeResource(){
+            var id = this.$route.params.id
+            var token = localStorage.getItem('jwt')
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/resource/delete/"+id,
+                headers: { "Authorization" : token }
+            })
+            .then(() => {
+                this.$router.push('/')
+            })
+            .catch(err => {
+                console.log(err)
+            })
         },
         getTotalSize() {
             var total = 0
@@ -217,6 +239,17 @@ export default {
         })
         .then(data => {
             this.item = data.data;
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/user/token/",
+                data: token,
+            })
+            .then(data => {
+                this.idUser = data.data.idUser
+            })
+            .catch(err => {
+                console.log(err)
+            })
         })
         .catch(err => {
             console.log(err)

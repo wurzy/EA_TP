@@ -46,14 +46,14 @@ public class PostController {
         return pb.changeComment(id,(int) cl.get("idUser"),scj);
     }
 
-    @DeleteMapping("/comment/{id}")
+    @PostMapping("/comment/delete/{id}")
     public PostJSON deleteComment(@RequestHeader(value="Authorization") String token, @PathVariable int id){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null) return null;
         return pb.deleteComment(id,(int) cl.get("idUser"));
     }
 
-    @DeleteMapping("/{id}")
+    @PostMapping("/delete/{id}")
     public PostJSON deletePost(@RequestHeader(value="Authorization") String token, @PathVariable int id){
         Claims cl = JWTUtil.decodeJWT(token);
         if(cl==null) return null;

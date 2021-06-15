@@ -4,20 +4,33 @@
         <v-container v-if="pub" style="padding: 40px 80px 0px 80px;">
 
             <v-row >
-                <v-col cols="12" sm="2" style="justify-items: center; display: flex; flex-direction: column; justify-content: center;">
+
+                <v-col  sm="2" style="justify-items: center; display: flex; flex-direction: column; justify-content: center;">
                     <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + pub.user.picture"></v-img>
                 </v-col>
-                <v-col cols="12" sm="10" style="padding-left: 10px; padding-top: 20px;" >
-                    <span style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
+                <v-col  sm="8" style="padding-left: 10px; padding-top: 20px;" >
+                    <v-text-field v-if="editing" type="text" no-resize v-model="newTitle" rows="4"></v-text-field>
+                    <span v-else style="font-size: 25px; color: #53a6bf;"> <b>{{ pub.title }}</b> <br/> </span>
                     <span> 
                         <b>Recurso: </b> 
                         <span style="cursor:pointer;" @click="handleClickResource(pub.resource.id)">{{ pub.resource.title }} <br/> </span>
                     </span>
                     <span> {{ pub.user.name }} há {{ pub.createdAt.split("T")[0] }} </span>
                 </v-col>
+                
+                <v-col sm="2" align="right" v-if="idUser==pub.user.idUser">
+                    <v-icon style="font-size:18px;margin-right:10px" @click="editing=!editing"> mdi-pencil </v-icon>
+                    <v-icon color="red" @click="removePost()"> mdi-close </v-icon>
+                </v-col>
             </v-row>
             <v-row class="corpo">
-                <span> {{ pub.body }} </span>
+                <v-textarea v-if="editing" type="text" no-resize v-model="newBody" rows="4"></v-textarea>
+                <span v-else> {{ pub.body }} </span>
+            </v-row>
+            <v-row>
+                <v-col v-if="editing" align="right">
+                    <v-btn small @click="editPost()">Guardar</v-btn>
+                </v-col>
             </v-row>
         <br/>
         <hr style="border-top: 2px solid #b1b1b1;">
@@ -33,15 +46,27 @@
             <v-row no-gutters style="width: 95%;">
               <v-col v-for="n in pub.comments" :key="n.idComment" cols="12" sm="12">
                   <v-row style="padding-top: 60px;">
-                    <v-col cols="12" sm="2" style="display:inline-flex">
+                    <v-col  sm="2" style="display:inline-flex">
                         <v-img :src="`http://localhost:8081/api/user/image/thumbnail/` + n.idUser.picture"></v-img>
                     </v-col>
-                    <v-col cols="12" sm="10" style="border-radius: 5px; background-color: white;">
-                        <span style="font-size: 20px; color: #ec6200;"> {{ n.idUser.name}} <br/> </span>
+
+                    <v-col  sm="9" style="border-radius: 5px; background-color: white;">
+                        <v-row class="pa-0"> 
+                            <v-col sm="11">
+                                <span style="font-size: 20px; color: #ec6200;"> {{ n.idUser.name}} </span>
+                            </v-col>
+                            <v-col sm="1" align="right">
+                                <v-icon v-if="idUser==n.idUser.idUser" small color="red" @click="removeComentario()"> mdi-close </v-icon>
+                            </v-col>
+                            <br/> 
+                        </v-row>
                         <span> {{ n.createdAt | moment("from") }} <br/> </span>
                         <hr>
                         <span style="padding-top: 10px;"> {{ n.body }} </span>
                     </v-col>
+                    
+                    
+
                   </v-row>
               </v-col>
             </v-row>
@@ -60,13 +85,21 @@ export default {
     name: 'Publicacao',
     data() {
         return { 
+            editing: false,
+            idUser: null,
             com:"",
-            pub: ''
+            token: localStorage.getItem('jwt'),
+            pub: '',
+            newBody: '',
+            newTitle: ''
         }
     },
     methods: {
         handleClickResource(id) {
             this.$router.push('/recursos/'+id)
+        },
+        sorted(lista) {
+            return lista.sort((a,b) => (a.createdAt < b.createdAt) ? 1 : ((b.createdAt < a.createdAt) ? -1 : 0))
         },
         addComment() {
             var json = {};
@@ -77,7 +110,7 @@ export default {
                 method: "post",
                 url: "http://localhost:8081/api/post/comment/" + this.$route.params.id,
                 data: json,
-                headers: { "Authorization" : "eyJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2MjM2MzE0MTUsInN1YiI6IkVBIiwiaWRVc2VyIjoxLCJuYW1lIjoiVsOhbHRlciBDYXJ2YWxobyIsImVtYWlsIjoiMUB1bWluaG8ucHQiLCJwYXNzd29yZCI6IjEiLCJsZXZlbCI6InByb2R1dG9yIiwicmVnaXN0ZXJEYXRlIjoxNjEyOTU2MDUzMDAwLCJkZXNjcmlwdGlvbiI6Ik91dHJhIERlc2MgIDExcmnDp8OjbyIsInBpY3R1cmUiOiIxLmpwZyIsImJsb2NrZWQiOmZhbHNlLCJyb2xlIjp7ImlkUm9sZSI6MTMsInR5cGUiOiJPbDExYSIsImFmZmlsaWF0aW9uIjoiT2wxMWUifSwiaXNzIjoiR3J1cG8gMDMifQ.hTywAawtTllFUOpQMedHIXuigU95c4kSXSc8_JK3iL8"},
+                headers: { "Authorization" : this.token},
             })
             .then(() => {
                     alert('Comentário efetuado com sucesso!')
@@ -87,6 +120,52 @@ export default {
                     console.log(err)
                     alert('Não foi possível adicionar novo comentário')
                 })
+        },
+        removePost(){
+            var id = this.$route.params.id
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/delete/"+id,
+                headers: { "Authorization" : this.token }
+            })
+            .then(() => {
+                this.$router.push('/')
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        editPost(){
+            var id = this.$route.params.id
+            var json = {}
+            json['title'] = this.newTitle
+            json['body'] = this.newBody
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/update/"+id,
+                headers: { "Authorization" : this.token },
+                data: json
+            })
+            .then(() => {
+                this.$router.go()
+            })
+            .catch(err => {
+                console.log(err)
+            })
+        },
+        removeComentario(){
+            var id = this.$route.params.id
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/post/comment/delete/"+id,
+                headers: { "Authorization" : this.token }
+            })
+            .then(() => {
+                this.$router.go()
+            })
+            .catch(err => {
+                console.log(err)
+            })
         }
     },
     created() {
@@ -96,6 +175,20 @@ export default {
         })
         .then(data => {
             this.pub = data.data;
+            this.newBody = this.pub.body
+            this.newTitle = this.pub.title
+            this.pub.comments = this.sorted(this.pub.comments)
+            axios({
+                method: "post",
+                url: "http://localhost:8081/api/user/token/",
+                data: this.token,
+            })
+            .then(data => {
+                this.idUser = data.data.idUser
+            })
+            .catch(err => {
+                console.log(err)
+            })
         })
         .catch(err => {
             console.log(err)
